@@ -15,6 +15,7 @@ import { UINotification } from '~~/lib/types';
 
 const notification = useState<UINotification | undefined>('notification');
 const notificationTimeoutID = ref<number | undefined>();
+const enclaveURL = useEnclaveURL();
 
 const startNotificationTimer = () => {
     if (notification.value) {
@@ -38,6 +39,10 @@ watch(notification, () => {
 
 onMounted(() => {
     startNotificationTimer();
+    const enclaveURLls = window.localStorage.getItem("enclave_url");
+    if (enclaveURLls && enclaveURL.value != enclaveURLls) {
+        enclaveURL.value = enclaveURLls
+    }
 })
 
 onUnmounted(() => {

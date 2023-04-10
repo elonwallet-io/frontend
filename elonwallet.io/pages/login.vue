@@ -5,7 +5,7 @@
             <div class="p-8 border rounded-md">
                 <v-form ref="form" class="flex flex-col gap-2 w-72" @submit.prevent>
                     <v-text-field variant="solo" v-model="email" :rules="emailRules" label="Email address" />
-                    <v-btn type="submit" variant="elevated" color="success" block @click="onLogin">Sign in</v-btn>
+                    <v-btn type="submit" variant="elevated" color="primary" block @click="onLogin">Sign in</v-btn>
                 </v-form>
             </div>
             <div class="p-4 border rounded-md text-center text-lg">
@@ -19,16 +19,17 @@
 </template>
 
 <script setup lang="ts">
+import { EnclaveApiClient } from '~/lib/EnclaveApiClient';
 import { solveLoginChallenge } from '~/lib/webauthn'
-import { HttpError, HttpErrorType } from '~~/lib/HttpError';
-import { UINotificationType } from '~~/lib/types';
+import { HttpError } from '~~/lib/HttpError';
 
 definePageMeta({
     layout: 'empty'
 })
-
-const { enclaveApiClient } = useApi();
 const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
+const { backendApiClient } = useApi();
+const enclaveURL = useEnclaveURL();
+
 
 const email = ref("");
 const emailRules = [
@@ -50,9 +51,15 @@ const onLogin = async () => {
     const { valid } = await form.value.validate()
     if (valid && window.PublicKeyCredential) {
         try {
+            enclaveURL.value = await backendApiClient.getEnclaveURL(email.value);
+            const { enclaveApiClient } = useApi();
+
             const options = await enclaveApiClient.loginInitialize();
             const credential = await solveLoginChallenge(options);
             await enclaveApiClient.loginFinalize(credential);
+
+            //Set this here, because we need to be able to get this when a user refreshes the main page without reauth
+            window.localStorage.setItem("enclave_url", enclaveURL.value);
 
             navigateTo("/")
         }
