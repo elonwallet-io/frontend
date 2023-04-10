@@ -9,13 +9,7 @@
             <div class="p-4 flex flex-col gap-4 w-2/6 bg-white m-auto">
                 <span class="text-xl">Add a new Contact</span>
                 <v-form ref="contactForm" @submit.prevent>
-                    <v-select label="Type" variant="solo" :items="kindList" v-model="kind" />
-                    <div v-if="kind === 'ElonWallet'">
-                        <v-text-field variant="solo" v-model="email" :rules="emailRules" label="Contact email address" />
-                    </div>
-                    <div v-else class>
-                        Coming soon!
-                    </div>
+                    <v-text-field variant="solo" v-model="email" :rules="emailRules" label="Contact email address" />
                     <div class="flex justify-end">
                         <v-btn variant="text" color="primary" @click="onDiscard">Discard</v-btn>
                         <v-btn variant="text" color="primary" @click="onSave">Save</v-btn>
@@ -66,13 +60,10 @@ const emailRules = [
         return true
     }
 ];
-const kindList = ['ElonWallet', 'External']
-const kind = ref<string>(kindList[0]);
 
 const onDiscard = async () => {
     contactForm.value.reset();
     dialog.value = false;
-    kind.value = kindList[0];
 }
 
 const onSave = async () => {
@@ -82,7 +73,6 @@ const onSave = async () => {
         emit("create-contact");
         contactForm.value.reset();
         dialog.value = false;
-        kind.value = kindList[0];
     }
 };
 
