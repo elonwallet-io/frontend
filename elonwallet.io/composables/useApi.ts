@@ -2,8 +2,10 @@ import { BackendApiClient } from "~~/lib/BackendApiClient"
 import { EnclaveApiClient } from "~~/lib/EnclaveApiClient";
 
 export default function () {
-    const backendApiClient = new BackendApiClient("http://localhost:8080");
-    const enclaveApiClient = new EnclaveApiClient("http://localhost:8081");
+    const backendURL = useBackendURL();
+    const enclaveURL = useEnclaveURL();
+    const backendApiClient = new BackendApiClient(backendURL.value);
+    const enclaveApiClient = new EnclaveApiClient(enclaveURL.value);
 
     return {
         backendApiClient,

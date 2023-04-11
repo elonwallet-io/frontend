@@ -146,4 +146,56 @@ export class BackendApiClient {
         const respJson = await resp.json();
         return respJson.contacts;
     }
+
+    async resendActivationLink(email: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/users/${encodeURIComponent(email)}/resend-activation-link`, {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        if (resp.status !== 201) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
+
+
+    async activateUser(email: string, activationString: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/users/${encodeURIComponent(email)}/activate`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ activation_string: activationString })
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
+
+    async getEnclaveURL(email: string): Promise<string> {
+        let resp = await fetch(`${this.baseURL}/users/${encodeURIComponent(email)}/enclave-url`, {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson.enclave_url;
+    }
 }
