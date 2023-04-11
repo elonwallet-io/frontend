@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { EnclaveApiClient } from '~/lib/EnclaveApiClient';
 import { solveLoginChallenge } from '~/lib/webauthn'
 import { HttpError } from '~~/lib/HttpError';
 
@@ -59,7 +58,8 @@ const onLogin = async () => {
             await enclaveApiClient.loginFinalize(credential);
 
             //Set this here, because we need to be able to get this when a user refreshes the main page without reauth
-            window.localStorage.setItem("enclave_url", enclaveURL.value);
+            localStorage.setItem("enclave_url", enclaveURL.value);
+            localStorage.setItem("email", email.value);
 
             navigateTo("/")
         }

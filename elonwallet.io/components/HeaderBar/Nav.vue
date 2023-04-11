@@ -61,6 +61,7 @@ const onLogout = async () => {
     try {
         const { enclaveApiClient } = useApi();
         await enclaveApiClient.logout();
+        localStorage.clear();
         navigateTo("/login")
     }
     catch (error) {

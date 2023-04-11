@@ -39,9 +39,12 @@ onMounted(async () => await refresh())
 watch(error, () => {
     if (error.value) {
         if (error.value instanceof HttpError) {
-            displayNotificationFromHttpError(error.value);
             if (error.value.type === HttpErrorType.Unauthorized) {
                 navigateTo("/login")
+            } else if (error.value.type == HttpErrorType.Forbidden) {
+                navigateTo("/reauthenticate?redirect=%2Fcredentials")
+            } else {
+                displayNotificationFromHttpError(error.value);
             }
         } else {
             displayNetworkErrorNotification();
@@ -52,9 +55,15 @@ watch(error, () => {
 const onClickDelete = async (credential: WebauthnCredential) => {
     try {
         await enclaveApiClient.removeCredential(credential.name);
-    } catch (error) {
-        if (error instanceof HttpError) {
-            displayNotificationFromHttpError(error);
+    } catch (err) {
+        if (err instanceof HttpError) {
+            if (err.type === HttpErrorType.Unauthorized) {
+                navigateTo("/login")
+            } else if (err.type == HttpErrorType.Forbidden) {
+                navigateTo("/reauthenticate?redirect=%2Fcredentials")
+            } else {
+                displayNotificationFromHttpError(err);
+            }
         } else {
             displayNetworkErrorNotification();
         }
