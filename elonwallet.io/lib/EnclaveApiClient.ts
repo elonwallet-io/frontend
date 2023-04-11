@@ -261,4 +261,20 @@ export class EnclaveApiClient {
         const respJson = await resp.json();
         return respJson;
     }
+
+    async logout(): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/logout`, {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
 }

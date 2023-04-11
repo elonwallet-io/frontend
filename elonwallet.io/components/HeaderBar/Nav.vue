@@ -36,6 +36,8 @@
 </template>
 
 <script setup lang="ts">
+const { displayNetworkErrorNotification } = useNotification();
+
 interface Setting {
     name: string,
 }
@@ -55,8 +57,15 @@ const onClickSetting = (setting: Setting) => {
     }
 }
 
-const onLogout = () => {
-    document.cookie = "logged-in=yes;expires=Thu, 01 Jan 1970 00:00:01 GMT"
+const onLogout = async () => {
+    try {
+        const { enclaveApiClient } = useApi();
+        await enclaveApiClient.logout();
+        navigateTo("/login")
+    }
+    catch (error) {
+        displayNetworkErrorNotification();
+    }
     navigateTo("/login")
 }
 </script>
