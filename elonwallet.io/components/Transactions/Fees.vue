@@ -56,14 +56,14 @@ watch(network, async () => {
 })
 
 const maxFee = computed(() => {
-    return fromWei(fees.value?.estimated_fees ?? "0", network.value!.decimals).substring(0, 10)
+    return parseFloat(fromWei(fees.value?.estimated_fees ?? "0", network.value!.decimals)).toFixed(8)
 })
 
 const baseFee = computed(() => {
-    return fromWei(fees.value?.base_fee ?? "0", network.value!.decimals).substring(0, 10)
+    return parseFloat(fromWei(fees.value?.base_fee ?? "0", network.value!.decimals)).toFixed(8)
 })
 
 const tip = computed(() => {
-    return fromWei(fees.value?.tip ?? "0", network.value!.decimals).substring(0, 10)
+    return parseFloat(fromWei(fees.value?.tip ?? "0", network.value!.decimals)).toFixed(8)
 })
 </script>
