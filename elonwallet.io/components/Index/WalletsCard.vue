@@ -33,7 +33,6 @@ watch(currentNetwork, () => {
 });
 
 watch(walletName, () => {
-    console.log(walletName.value)
     currentWallet.value = wallets.value!.find((w) => w.name === walletName.value);
 });
 

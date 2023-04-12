@@ -47,6 +47,8 @@ const emailRules = [
         return 'Email must be valid.'
     },
     async (value: string) => {
+        if (!/.+@.+\..+/.test(value)) return false
+
         try {
             await backendApiClient.getUser(value);
         } catch (error) {

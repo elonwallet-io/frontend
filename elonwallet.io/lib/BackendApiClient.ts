@@ -43,8 +43,8 @@ export class BackendApiClient {
         return balanceJson.balance;
     }
 
-    async getTransactions(address: string, chain: string, cursor?: string): Promise<TransactionsResponse> {
-        let resp = await fetch(`${this.baseURL}/${address}/transactions?chain=${chain}&cursor=${cursor}`, {
+    async getTransactions(address: string, chain: string): Promise<TransactionsResponse> {
+        let resp = await fetch(`${this.baseURL}/${address}/transactions?chain=${chain}`, {
             method: "GET",
             headers: {
                 'Accept': 'application/json'
