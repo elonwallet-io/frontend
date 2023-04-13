@@ -27,14 +27,12 @@
 <script setup lang="ts">
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { WebauthnCredential } from '~~/lib/types';
-const { enclaveApiClient } = useApi();
 const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
+const enclaveApiClient = useEnclave();
 
-const { data: credentials, error, refresh } = useAsyncData<WebauthnCredential[]>('credentials', async () => {
+const { data: credentials, error, refresh } = useAsyncDataWithCache<WebauthnCredential[]>('credentials', async () => {
     return await enclaveApiClient.getCredentials();
 })
-
-onMounted(async () => await refresh())
 
 watch(error, () => {
     if (error.value) {

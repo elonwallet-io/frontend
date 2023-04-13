@@ -18,7 +18,6 @@ definePageMeta({
     layout: 'empty'
 })
 const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
-const { enclaveApiClient } = useApi();
 
 const route = useRoute();
 const redirect = route.query.redirect?.toString() ?? "/";
@@ -26,6 +25,8 @@ const redirect = route.query.redirect?.toString() ?? "/";
 const onReauthentication = async () => {
     if (window.PublicKeyCredential) {
         try {
+            const enclaveApiClient = useEnclave();
+
             const options = await enclaveApiClient.loginInitialize();
             const credential = await solveLoginChallenge(options);
             await enclaveApiClient.loginFinalize(credential);

@@ -31,7 +31,7 @@ watch(currentWallet, async () => {
         await refresh();
 });
 
-let interval = 0;
+let interval: number;
 
 onMounted(async () => {
     interval = window.setInterval(async () => {

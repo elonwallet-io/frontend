@@ -15,7 +15,6 @@
 <script setup lang="ts">
 import { HttpError } from '~~/lib/HttpError';
 
-const { backendApiClient } = useApi();
 const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
 const userEmail = useEmail();
 const emit = defineEmits(['on-signup'])
@@ -49,6 +48,8 @@ const onSignup = async () => {
     const { valid } = await form.value.validate()
     if (valid) {
         try {
+            const backendApiClient = useBackend();
+
             await backendApiClient.createUser(name.value, email.value);
             userEmail.value = email.value;
             emit('on-signup');

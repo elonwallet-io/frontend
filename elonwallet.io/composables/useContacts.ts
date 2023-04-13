@@ -2,11 +2,13 @@ import { User } from "~/lib/types";
 import { HttpError, HttpErrorType } from "~~/lib/HttpError";
 
 export default function () {
-    const { backendApiClient } = useApi();
+    const email = useEmail();
+    const backendJWT = useBackendJWT();
+    const backendApiClient = useBackend();
     const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
 
-    const { data: contacts, error, refresh } = useLazyAsyncDataWithCache<User[]>("contacts", async () => {
-        return await backendApiClient.getContacts();
+    const { data: contacts, error, refresh } = useAsyncDataWithCache<User[]>("contacts", async () => {
+        return await backendApiClient.getContacts(email.value, backendJWT.value);
     });
 
     watch(error, () => {

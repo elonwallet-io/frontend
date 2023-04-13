@@ -34,7 +34,7 @@ import { solveLoginChallenge } from '~/lib/webauthn';
 const wallet = useCurrentWallet();
 const network = useCurrentNetwork();
 const { contacts } = useContacts();
-const { enclaveApiClient } = useApi();
+const enclaveApiClient = useEnclave();
 const { balance } = useBalance();
 const { fees } = useFees();
 const { displayNetworkErrorNotification, displayNotificationFromHttpError, displayNotification } = useNotification();

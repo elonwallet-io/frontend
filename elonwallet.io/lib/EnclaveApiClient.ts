@@ -64,7 +64,7 @@ export class EnclaveApiClient {
         return respJson.publicKey;
     }
 
-    async loginFinalize(credential: UrlEncodedPublicKeyCredential): Promise<void> {
+    async loginFinalize(credential: UrlEncodedPublicKeyCredential): Promise<string> {
         const resp = await fetch(`${this.baseURL}/login/finalize`, {
             method: "POST",
             headers: {
@@ -79,6 +79,9 @@ export class EnclaveApiClient {
             const error = await HttpError.fromResponse(resp);
             throw error;
         }
+
+        const respJson = await resp.json();
+        return respJson.backend_jwt;
     }
 
     async createWallet(name: string, visible: boolean): Promise<void> {

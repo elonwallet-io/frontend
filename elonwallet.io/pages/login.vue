@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+import { b } from 'consola/dist/consola-b98e8215';
 import { solveLoginChallenge } from '~/lib/webauthn'
 import { HttpError } from '~~/lib/HttpError';
 
@@ -26,9 +27,6 @@ definePageMeta({
     layout: 'empty'
 })
 const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
-const { backendApiClient } = useApi();
-const enclaveURL = useEnclaveURL();
-
 
 const email = ref("");
 const emailRules = [
@@ -50,16 +48,19 @@ const onLogin = async () => {
     const { valid } = await form.value.validate()
     if (valid && window.PublicKeyCredential) {
         try {
-            enclaveURL.value = await backendApiClient.getEnclaveURL(email.value);
-            const { enclaveApiClient } = useApi();
+            const backendApiClient = useBackend();
+            const enclaveURL = useEnclaveURL();
+            enclaveURL.value = await backendApiClient.getEnclaveURL(email.value)
 
+            const enclaveApiClient = useEnclave();
             const options = await enclaveApiClient.loginInitialize();
             const credential = await solveLoginChallenge(options);
-            await enclaveApiClient.loginFinalize(credential);
+            const backendJWT = await enclaveApiClient.loginFinalize(credential);
 
             //Set this here, because we need to be able to get this when a user refreshes the main page without reauth
-            localStorage.setItem("enclave_url", enclaveURL.value);
             localStorage.setItem("email", email.value);
+            localStorage.setItem("enclave_url", enclaveURL.value);
+            localStorage.setItem("backend_jwt", backendJWT)
 
             navigateTo("/")
         }
