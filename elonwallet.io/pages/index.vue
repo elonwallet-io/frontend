@@ -19,21 +19,17 @@ const { wallets } = useWallets();
 const { networks } = useNetworks();
 const showSendTransaction = ref(false);
 
-onMounted(async () => {
-    await refreshNuxtData(['networks', 'wallets']);
-})
-
 watch(networks, () => {
     if (networks.value)
-        network.value = networks.value[0];
+        network.value = networks.value[0]!;
 });
 
 watch(wallets, () => {
     if (wallets.value)
-        wallet.value = wallets.value[0];
+        wallet.value = wallets.value[0]!;
 });
 
 const ready = computed(() => {
-    return !!wallets.value && !!wallet.value && !!networks.value && !!network.value
+    return wallets.value && wallet.value && networks.value && network.value
 })
 </script>

@@ -8,13 +8,14 @@ export class BackendApiClient {
         this.baseURL = baseURL
     }
 
-    async getUser(email: string): Promise<User> {
+    async getUser(email: string, jwt: string): Promise<User> {
         let resp = await fetch(`${this.baseURL}/users/${encodeURIComponent(email)}`, {
             method: "GET",
             headers: {
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'X-Email': email,
+                'Authorization': `Bearer ${jwt}`
             },
-            credentials: 'include'
         });
 
         if (resp.status !== 200) {
@@ -25,13 +26,14 @@ export class BackendApiClient {
         return resp.json();
     }
 
-    async getBalance(address: string, chain: string): Promise<string> {
+    async getBalance(address: string, chain: string, email: string, jwt: string): Promise<string> {
         let resp = await fetch(`${this.baseURL}/${address}/balance?chain=${chain}`, {
             method: "GET",
             headers: {
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'X-Email': email,
+                'Authorization': `Bearer ${jwt}`
             },
-            credentials: 'include'
         });
 
         if (resp.status !== 200) {
@@ -43,13 +45,14 @@ export class BackendApiClient {
         return balanceJson.balance;
     }
 
-    async getTransactions(address: string, chain: string): Promise<TransactionsResponse> {
+    async getTransactions(address: string, chain: string, email: string, jwt: string): Promise<TransactionsResponse> {
         let resp = await fetch(`${this.baseURL}/${address}/transactions?chain=${chain}`, {
             method: "GET",
             headers: {
-                'Accept': 'application/json'
-            },
-            credentials: 'include'
+                'Accept': 'application/json',
+                'X-Email': email,
+                'Authorization': `Bearer ${jwt}`
+            }
         });
 
         if (resp.status !== 200) {
@@ -67,7 +70,6 @@ export class BackendApiClient {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            credentials: 'include',
             body: JSON.stringify({ name: name, email: email })
         });
 
@@ -77,15 +79,15 @@ export class BackendApiClient {
         }
     }
 
-    async addWallet(name: string, address: string): Promise<void> {
-        //TODO replace 123
-        const resp = await fetch(`${this.baseURL}/users/123/wallets`, {
+    async addWallet(name: string, address: string, email: string, jwt: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/users/${encodeURIComponent(email)}/wallets`, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Email': email,
+                'Authorization': `Bearer ${jwt}`
             },
-            credentials: 'include',
             body: JSON.stringify({ name: name, address: address })
         });
 
@@ -95,15 +97,16 @@ export class BackendApiClient {
         }
     }
 
-    async createContact(email: string): Promise<void> {
+    async createContact(contactEmail: string, email: string, jwt: string): Promise<void> {
         const resp = await fetch(`${this.baseURL}/contacts`, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Email': email,
+                'Authorization': `Bearer ${jwt}`
             },
-            credentials: 'include',
-            body: JSON.stringify({ email: email })
+            body: JSON.stringify({ email: contactEmail })
         });
 
         if (resp.status !== 201) {
@@ -112,14 +115,14 @@ export class BackendApiClient {
         }
     }
 
-    async removeContact(email: string): Promise<void> {
-        const resp = await fetch(`${this.baseURL}/contacts/${email}`, {
+    async removeContact(contactEmail: string, email: string, jwt: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/contacts/${contactEmail}`, {
             method: "DELETE",
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
+                'X-Email': email,
+                'Authorization': `Bearer ${jwt}`
+            }
         });
 
         if (resp.status !== 200) {
@@ -128,14 +131,15 @@ export class BackendApiClient {
         }
     }
 
-    async getContacts(): Promise<User[]> {
+    async getContacts(email: string, jwt: string): Promise<User[]> {
         const resp = await fetch(`${this.baseURL}/contacts`, {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
+                'Content-Type': 'application/json',
+                'X-Email': email,
+                'Authorization': `Bearer ${jwt}`
+            }
         });
 
         if (resp.status !== 200) {
@@ -153,8 +157,7 @@ export class BackendApiClient {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            },
-            credentials: 'include'
+            }
         });
 
         if (resp.status !== 201) {
@@ -171,7 +174,6 @@ export class BackendApiClient {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            credentials: 'include',
             body: JSON.stringify({ activation_string: activationString })
         });
 
@@ -187,7 +189,6 @@ export class BackendApiClient {
             headers: {
                 'Accept': 'application/json'
             },
-            credentials: 'include'
         });
 
         if (resp.status !== 200) {

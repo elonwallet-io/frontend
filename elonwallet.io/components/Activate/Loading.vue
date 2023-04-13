@@ -9,18 +9,22 @@
 
 import { HttpError } from '~/lib/HttpError';
 const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
-const { backendApiClient } = useApi();
-const enclaveURL = useEnclaveURL();
 
 const props = defineProps<{
     email: string,
     activationString: string,
 }>();
 
+const emit = defineEmits(['registered']);
+
 onMounted(async () => {
     try {
+
+        const backendApiClient = useBackend();
         await backendApiClient.activateUser(props.email, props.activationString);
-        enclaveURL.value = await backendApiClient.getEnclaveURL(props.email);
+        const enclaveURL = useEnclaveURL();
+        enclaveURL.value = await backendApiClient.getEnclaveURL(props.email)
+        emit('registered');
     }
     catch (error) {
         if (error instanceof HttpError) {

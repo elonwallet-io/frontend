@@ -5,55 +5,28 @@
             <Notification v-if="notification" :notification="notification" />
         </div>
         <main>
-            <slot />
+            <slot v-if="ready" />
         </main>
     </div>
 </template>
 
 <script setup lang="ts">
-import { UINotification } from '~~/lib/types';
+const notification = useNotificationTimer();
+const ready = ref(false);
 
-const notification = useState<UINotification | undefined>('notification');
-const notificationTimeoutID = ref<number | undefined>();
-const enclaveURL = useEnclaveURL();
 const email = useEmail();
-
-const startNotificationTimer = () => {
-    if (notification.value) {
-        notificationTimeoutID.value = window.setTimeout(() => {
-            notification.value = undefined;
-        }, 10000)
-    }
-}
-
-const stopNotificationTimer = () => {
-    if (notificationTimeoutID.value) {
-        window.clearTimeout(notificationTimeoutID.value);
-        notificationTimeoutID.value = undefined;
-    }
-}
-
-watch(notification, () => {
-    stopNotificationTimer();
-    startNotificationTimer();
-})
-
-onMounted(() => {
-    startNotificationTimer();
-})
+const backendJWT = useBackendJWT();
+const enclaveURL = useEnclaveURL();
 
 onBeforeMount(() => {
-    const enclaveURLStored = localStorage.getItem("enclave_url");
-    if (enclaveURLStored)
-        enclaveURL.value = enclaveURLStored
+    email.value = localStorage.getItem('email')!;
+    backendJWT.value = localStorage.getItem('backend_jwt')!;
+    enclaveURL.value = localStorage.getItem('enclave_url')!;
+    console.log(email.value)
+    console.log(backendJWT.value)
+    console.log(enclaveURL.value)
 
-    const emailStored = localStorage.getItem("email");
-    if (emailStored)
-        email.value = emailStored
-})
-
-onUnmounted(() => {
-    stopNotificationTimer();
+    ready.value = true;
 })
 
 </script>

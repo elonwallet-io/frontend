@@ -59,7 +59,7 @@ const onClickSetting = (setting: Setting) => {
 
 const onLogout = async () => {
     try {
-        const { enclaveApiClient } = useApi();
+        const enclaveApiClient = useEnclave();
         await enclaveApiClient.logout();
         localStorage.clear();
         navigateTo("/login")

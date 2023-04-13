@@ -35,7 +35,7 @@ const onRegisterCredentials = async () => {
     const { valid } = await form.value.validate()
     if (valid && window.PublicKeyCredential) {
         try {
-            const { enclaveApiClient } = useApi();
+            const enclaveApiClient = useEnclave();
 
             const options = await enclaveApiClient.registerInitialize(props.email);
             const credential = await registerCredential(options);

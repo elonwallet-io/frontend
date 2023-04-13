@@ -1,12 +1,11 @@
 import { HttpError, HttpErrorType } from "~~/lib/HttpError";
 import { Wallet } from "~~/lib/types";
-import useLazyAsyncDataWithCache from "./useLazyAsyncDataWithCache";
 
 export default function () {
-    const { enclaveApiClient } = useApi();
+    const enclaveApiClient = useEnclave();
     const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
 
-    const { data: wallets, error, refresh } = useLazyAsyncDataWithCache<Wallet[]>("wallets", async () => {
+    const { data: wallets, error, refresh } = useAsyncDataWithCache<Wallet[]>("wallets", async () => {
         return await enclaveApiClient.getWallets();
     });
 

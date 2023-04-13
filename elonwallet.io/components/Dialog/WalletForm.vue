@@ -25,7 +25,9 @@
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { UINotificationType } from '~~/lib/types';
 
-const { enclaveApiClient, backendApiClient } = useApi();
+const email = useEmail();
+const backendJWT = useBackendJWT();
+const backendApiClient = useBackend();
 const { displayNotification, displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
 const { wallets, refresh } = useWallets();
 const dialog = ref(false);
@@ -61,11 +63,13 @@ const onSave = async () => {
 
 const createWallet = async (name: string, visible: boolean) => {
     try {
+        const enclaveApiClient = useEnclave();
+
         await enclaveApiClient.createWallet(name, visible);
         await refresh();
         if (visible) {
             const wallet = wallets.value!.find(item => item.name === name);
-            await backendApiClient.addWallet(wallet!.name, wallet!.address)
+            await backendApiClient.addWallet(wallet!.name, wallet!.address, email.value, backendJWT.value)
         }
         displayNotification("Wallet created", `Wallet ${name} has been created successfully`, UINotificationType.Success);
     }

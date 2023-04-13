@@ -24,7 +24,7 @@
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { User } from '~~/lib/types';
 
-const { backendApiClient } = useApi();
+const backendApiClient = useBackend();
 const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
 
 defineProps<{

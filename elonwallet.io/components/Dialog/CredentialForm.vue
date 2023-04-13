@@ -25,7 +25,6 @@
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { WebauthnCredential, UINotificationType } from '~~/lib/types';
 import { registerCredential, UrlEncodedPublicKeyCredential } from '~~/lib/webauthn';
-const { enclaveApiClient } = useApi();
 const { displayNotification, displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
 
 const dialog = ref<boolean>(false);
@@ -64,6 +63,8 @@ const onSave = async () => {
 
 const createCredential = async (name: string) => {
     try {
+        const enclaveApiClient = useEnclave();
+
         const options = await enclaveApiClient.createCredentialInitialize();
         const credential: UrlEncodedPublicKeyCredential = await registerCredential(options);
         await enclaveApiClient.createCredentialFinalize({

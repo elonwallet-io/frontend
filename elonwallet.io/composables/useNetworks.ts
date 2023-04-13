@@ -2,10 +2,10 @@ import { HttpError, HttpErrorType } from "~~/lib/HttpError";
 import { Network } from "~~/lib/types";
 
 export default function () {
-    const { enclaveApiClient } = useApi();
+    const enclaveApiClient = useEnclave();
     const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
 
-    const { data: networks, error, refresh } = useLazyAsyncDataWithCache<Network[]>("networks", async () => {
+    const { data: networks, error, refresh } = useAsyncDataWithCache<Network[]>("networks", async () => {
         return await enclaveApiClient.getNetworks();
     });
 
