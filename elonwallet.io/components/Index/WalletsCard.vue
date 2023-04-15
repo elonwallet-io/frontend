@@ -33,7 +33,7 @@ watch(currentNetwork, () => {
 });
 
 watch(walletName, () => {
-    currentWallet.value = wallets.value!.find((w) => w.name === walletName.value);
+    currentWallet.value = wallets.value!.find((w) => w.name === walletName.value)!;
 });
 
 watch(networkName, () => {

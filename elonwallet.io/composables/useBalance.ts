@@ -1,7 +1,6 @@
 import { HttpError, HttpErrorType } from "~/lib/HttpError";
 
 export default function () {
-    const email = useEmail();
     const backendJWT = useBackendJWT();
     const backendApiClient = useBackend();
     const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
@@ -9,7 +8,7 @@ export default function () {
     const wallet = useCurrentWallet();
 
     const { data: balance, error, refresh } = useAsyncDataWithCache<string>("balance", async () => {
-        return await backendApiClient.getBalance(wallet.value.address, network.value.chain, email.value, backendJWT.value);
+        return await backendApiClient.getBalance(wallet.value.address, network.value.chain, backendJWT.value);
     });
 
     watch(error, () => {

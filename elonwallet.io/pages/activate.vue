@@ -8,10 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import { HttpError } from '~/lib/HttpError';
-
-const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
-
 definePageMeta({
     layout: 'empty'
 })

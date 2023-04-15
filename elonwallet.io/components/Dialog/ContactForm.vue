@@ -31,6 +31,7 @@ defineProps<{
     contacts?: User[]
 }>();
 
+const backendJWT = useBackendJWT();
 const emit = defineEmits(['create-contact'])
 const dialog = ref(false);
 const contactForm = ref();
@@ -50,7 +51,7 @@ const emailRules = [
         if (!/.+@.+\..+/.test(value)) return false
 
         try {
-            await backendApiClient.getUser(value);
+            await backendApiClient.getUser(value, backendJWT.value);
         } catch (error) {
             if (error instanceof HttpError) {
                 if (error.type == HttpErrorType.NotFound) {
@@ -80,7 +81,7 @@ const onSave = async () => {
 
 const onCreateContact = async (email: string) => {
     try {
-        await backendApiClient.createContact(email);
+        await backendApiClient.createContact(email, backendJWT.value);
     } catch (error) {
         if (error instanceof HttpError) {
             displayNotificationFromHttpError(error);

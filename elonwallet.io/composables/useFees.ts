@@ -7,7 +7,7 @@ export default function () {
     const network = useCurrentNetwork();
 
     const { data: fees, error, refresh } = useAsyncDataWithCache<Fees>("fees", async () => {
-        return await enclaveApiClient.getFees(network.value!.chain);
+        return await enclaveApiClient.getFees(network.value.chain);
     });
 
     watch(error, () => {

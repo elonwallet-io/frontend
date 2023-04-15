@@ -13,7 +13,6 @@ export class BackendApiClient {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
-                'X-Email': email,
                 'Authorization': `Bearer ${jwt}`
             },
         });
@@ -26,12 +25,11 @@ export class BackendApiClient {
         return resp.json();
     }
 
-    async getBalance(address: string, chain: string, email: string, jwt: string): Promise<string> {
+    async getBalance(address: string, chain: string, jwt: string): Promise<string> {
         let resp = await fetch(`${this.baseURL}/${address}/balance?chain=${chain}`, {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
-                'X-Email': email,
                 'Authorization': `Bearer ${jwt}`
             },
         });
@@ -45,12 +43,11 @@ export class BackendApiClient {
         return balanceJson.balance;
     }
 
-    async getTransactions(address: string, chain: string, email: string, jwt: string): Promise<TransactionsResponse> {
+    async getTransactions(address: string, chain: string, jwt: string): Promise<TransactionsResponse> {
         let resp = await fetch(`${this.baseURL}/${address}/transactions?chain=${chain}`, {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
-                'X-Email': email,
                 'Authorization': `Bearer ${jwt}`
             }
         });
@@ -85,7 +82,6 @@ export class BackendApiClient {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Email': email,
                 'Authorization': `Bearer ${jwt}`
             },
             body: JSON.stringify({ name: name, address: address })
@@ -97,13 +93,12 @@ export class BackendApiClient {
         }
     }
 
-    async createContact(contactEmail: string, email: string, jwt: string): Promise<void> {
+    async createContact(contactEmail: string, jwt: string): Promise<void> {
         const resp = await fetch(`${this.baseURL}/contacts`, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Email': email,
                 'Authorization': `Bearer ${jwt}`
             },
             body: JSON.stringify({ email: contactEmail })
@@ -115,12 +110,11 @@ export class BackendApiClient {
         }
     }
 
-    async removeContact(contactEmail: string, email: string, jwt: string): Promise<void> {
+    async removeContact(contactEmail: string, jwt: string): Promise<void> {
         const resp = await fetch(`${this.baseURL}/contacts/${contactEmail}`, {
             method: "DELETE",
             headers: {
                 'Accept': 'application/json',
-                'X-Email': email,
                 'Authorization': `Bearer ${jwt}`
             }
         });
@@ -131,13 +125,12 @@ export class BackendApiClient {
         }
     }
 
-    async getContacts(email: string, jwt: string): Promise<User[]> {
+    async getContacts(jwt: string): Promise<User[]> {
         const resp = await fetch(`${this.baseURL}/contacts`, {
             method: "GET",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Email': email,
                 'Authorization': `Bearer ${jwt}`
             }
         });
