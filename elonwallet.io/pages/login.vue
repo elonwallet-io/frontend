@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { b } from 'consola/dist/consola-b98e8215';
 import { solveLoginChallenge } from '~/lib/webauthn'
 import { HttpError } from '~~/lib/HttpError';
 

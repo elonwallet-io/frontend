@@ -280,4 +280,21 @@ export class EnclaveApiClient {
             throw error;
         }
     }
+
+    async authorizeNewDevice(otp: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/credentials/authorize-new-device`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ otp: otp })
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
 }
