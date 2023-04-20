@@ -1,5 +1,5 @@
 import { HttpError } from "./HttpError";
-import { CreateCredentialFinalizePayload, Fees, Network, TransactionFinalizePayload, Wallet, WebauthnCredential } from "./types";
+import { CreateCredentialFinalizePayload, Fees, Network, OTP, TransactionFinalizePayload, Wallet, WebauthnCredential } from "./types";
 import { UrlEncodedPublicKeyCredential, UrlEncodedPublicKeyCredentialCreationOptions, UrlEncodedPublicKeyCredentialRequestOptions } from "./webauthn";
 
 export class EnclaveApiClient {
@@ -273,6 +273,58 @@ export class EnclaveApiClient {
                 'Content-Type': 'application/json'
             },
             credentials: 'include'
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
+
+    async createOTP(): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/otp`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
+
+        if (resp.status !== 201) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
+
+    async getOTP(): Promise<OTP> {
+        const resp = await fetch(`${this.baseURL}/otp`, {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson;
+    }
+
+    async loginWithOTP(otp: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/otp/login`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ otp: otp })
         });
 
         if (resp.status !== 200) {

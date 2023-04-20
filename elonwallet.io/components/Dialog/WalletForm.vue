@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { isAlphaNumeric, isRequired, isUnique } from '~/lib/VuetifyValidationRules';
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { UINotificationType } from '~~/lib/types';
 
@@ -34,16 +35,9 @@ const dialog = ref(false);
 const walletForm = ref();
 const walletName = ref("");
 const walletNameRules = [
-    (value: string) => {
-        if (value) return true
-
-        return 'Wallet name is required.'
-    },
-    (value: string) => {
-        if (wallets.value!.findIndex(item => item.name === value) === -1) return true
-
-        return 'Wallet name must be unique.'
-    }
+    isRequired("Wallet Name"),
+    isAlphaNumeric("Wallet Name"),
+    isUnique("Wallet Name", wallets.value?.map(item => item.name) ?? [])
 ];
 const walletVisibility = ref(false);
 

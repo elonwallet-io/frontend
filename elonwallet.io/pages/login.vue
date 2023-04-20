@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { b } from 'consola/dist/consola-b98e8215';
+import { isEmail, isRequired } from '~/lib/VuetifyValidationRules';
 import { solveLoginChallenge } from '~/lib/webauthn'
 import { HttpError } from '~~/lib/HttpError';
 
@@ -30,16 +30,8 @@ const { displayNotificationFromHttpError, displayNetworkErrorNotification } = us
 
 const email = ref("");
 const emailRules = [
-    (value: string) => {
-        if (value) return true
-
-        return 'Email is required.'
-    },
-    (value: string) => {
-        if (/.+@.+\..+/.test(value)) return true
-
-        return 'Email must be valid.'
-    },
+    isRequired("Email"),
+    isEmail()
 ];
 
 const form = ref();

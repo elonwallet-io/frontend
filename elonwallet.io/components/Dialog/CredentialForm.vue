@@ -6,83 +6,38 @@
                     + Add Webauthn Credential
                 </v-btn>
             </template>
-            <div class="p-4 flex flex-col gap-4 w-2/6 bg-white m-auto">
-                <span class="text-xl">Add a new webauthn credential</span>
-                <v-form ref="credentialForm" @submit.prevent>
-                    <v-text-field variant="solo" v-model="credentialName" :rules="credentialNameRules"
-                        label="Security Key name" />
-                    <div class="flex justify-end">
-                        <v-btn variant="text" color="primary" @click="onDiscard">Discard</v-btn>
-                        <v-btn variant="text" color="primary" @click="onSave">Save</v-btn>
-                    </div>
-                </v-form>
+            <div class="p-4 flex flex-col w-2/6 bg-white m-auto">
+                <h3 class="text-xl">Add a new Credential</h3>
+                <v-switch class="mt-2" label="My credential is on another device" color="primary" v-model="external"
+                    hide-details />
+                <CredentialsLocalForm v-if="!external" :credentials="credentials" @credential-created="onCredentialCreated"
+                    @discard="onClose" />
+                <CredentialsExternalForm v-else :credentials="credentials" @authorize="onClose" @discard="onClose" />
             </div>
         </v-dialog>
     </div>
 </template>
 
 <script setup lang="ts">
-import { HttpError, HttpErrorType } from '~~/lib/HttpError';
-import { WebauthnCredential, UINotificationType } from '~~/lib/types';
-import { registerCredential, UrlEncodedPublicKeyCredential } from '~~/lib/webauthn';
-const { displayNotification, displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
+import { WebauthnCredential } from '~~/lib/types';
 
-const dialog = ref<boolean>(false);
-const props = defineProps<{
+const external = ref(false)
+const dialog = ref(false);
+
+defineProps<{
     credentials: WebauthnCredential[]
 }>();
+
 const emit = defineEmits(['credential-created'])
-const credentialForm = ref();
 
-const credentialName = ref("");
-const credentialNameRules = [
-    (value: string) => {
-        if (value) return true
-
-        return 'Credential name is required.'
-    },
-    (value: string) => {
-        if (props.credentials.findIndex(item => item.name === value) === -1) return true
-        return 'Credential name must be unique.'
-    }
-];
-
-const onDiscard = async () => {
-    credentialForm.value.reset();
-    dialog.value = false;
+const onCredentialCreated = () => {
+    emit('credential-created');
+    onClose();
 }
 
-const onSave = async () => {
-    const { valid } = await credentialForm.value.validate();
-    if (valid) {
-        await createCredential(credentialName.value);
-        credentialForm.value.reset();
-        dialog.value = false;
-    }
-};
+const onClose = () => {
+    dialog.value = false;
+    external.value = false;
+}
 
-const createCredential = async (name: string) => {
-    try {
-        const enclaveApiClient = useEnclave();
-
-        const options = await enclaveApiClient.createCredentialInitialize();
-        const credential: UrlEncodedPublicKeyCredential = await registerCredential(options);
-        await enclaveApiClient.createCredentialFinalize({
-            name: name,
-            creation_response: credential
-        });
-        displayNotification("Credential created", `Credential ${name} has been created successfully`, UINotificationType.Success);
-        emit('credential-created');
-    }
-    catch (error) {
-        if (error instanceof HttpError) {
-            displayNotificationFromHttpError(error);
-            if (error.type === HttpErrorType.Unauthorized) {
-                navigateTo("/login")
-            }
-        } else {
-            displayNetworkErrorNotification();
-        }
-    }
-};
 </script>

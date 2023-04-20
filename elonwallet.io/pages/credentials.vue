@@ -2,7 +2,7 @@
     <div v-if="credentials" class="flex flex-col items-center mt-20">
         <div class="w-1/2 p-2 bg-white shadow-md rounded-md">
             <div class="flex justify-between items-center">
-                <span class="font-bold">My Security Keys</span>
+                <span class="font-bold">My Credentials</span>
                 <DialogCredentialForm :credentials="credentials" @credential-created="refresh()" />
             </div>
             <v-list :lines="false">
@@ -32,6 +32,10 @@ const enclaveApiClient = useEnclave();
 
 const { data: credentials, error, refresh } = useAsyncDataWithCache<WebauthnCredential[]>('credentials', async () => {
     return await enclaveApiClient.getCredentials();
+})
+
+onMounted(async () => {
+    await refresh();
 })
 
 watch(error, () => {
