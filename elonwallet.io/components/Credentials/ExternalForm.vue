@@ -1,61 +1,47 @@
 <template>
     <div>
         <p>1. Visit https://elonwallet.io/new-device on the device</p>
-        <p>2. Follow the instructions on the page.</p>
-        <p>3. Authorize the request with the code provided.</p>
+        <p>2. Enter the code you see below to authenticate.</p>
+        <p>3. Follow the instructions to add your credential.</p>
         <v-form class="mt-4" ref="credentialForm" @submit.prevent>
-            <v-text-field variant="solo" v-model="otp" :rules="otpRules" label="One Time Password" />
+            <v-text-field variant="solo" v-model="otpSecret" label="One Time Password" readonly />
             <div class="flex justify-end">
                 <v-btn variant="text" color="primary" @click="onDiscard">Discard</v-btn>
-                <v-btn variant="text" color="primary" @click="onAuthorize">Authorize</v-btn>
             </div>
         </v-form>
     </div>
 </template>
 
 <script setup lang="ts">
+import { OTP } from '~/lib/types';
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
-import { WebauthnCredential, UINotificationType } from '~~/lib/types';
-const { displayNotification, displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
+const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
 
-const credentialForm = ref();
 
-const props = defineProps<{
-    credentials: WebauthnCredential[],
-}>();
+const emit = defineEmits(['discard'])
+const otp = ref<OTP>();
+const otpSecret = ref("");
 
-const emit = defineEmits(['discard', 'authorize'])
-
-const otp = ref("");
-const otpRules = [
-    (value: string) => {
-        if (/^[0-9]{6}$/.test(value)) return true
-
-        return 'Invalid one time password'
+watch(otp, () => {
+    if (otp.value) {
+        console.log(otp.value)
+        otpSecret.value = otp.value.secret;
     }
-];
+})
+
 
 const onDiscard = async () => {
-    credentialForm.value.reset();
     emit('discard');
 }
 
-const onAuthorize = async () => {
-    const { valid } = await credentialForm.value.validate();
-    if (valid) {
-        const ok = await authorizeCredentialRequest(otp.value);
-        if (ok) {
-            credentialForm.value.reset();
-            emit('authorize');
-        }
-    }
-};
-
-const authorizeCredentialRequest = async (otp: string): Promise<boolean> => {
+onMounted(async () => {
     try {
         const enclaveApiClient = useEnclave();
-        await enclaveApiClient.authorizeNewDevice(otp);
-        return true;
+        otp.value = await enclaveApiClient.getOTP();
+        if (!otp.value.active) {
+            await enclaveApiClient.createOTP();
+            otp.value = await enclaveApiClient.getOTP();
+        }
     }
     catch (error) {
         if (error instanceof HttpError) {
@@ -66,7 +52,7 @@ const authorizeCredentialRequest = async (otp: string): Promise<boolean> => {
         } else {
             displayNetworkErrorNotification();
         }
-        return false;
     }
-};
+})
+
 </script>

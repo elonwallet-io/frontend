@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import { isUnique, isRequired, isAlphaNumeric } from '~/lib/VuetifyValidationRules';
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { WebauthnCredential, UINotificationType } from '~~/lib/types';
 import { registerCredential, UrlEncodedPublicKeyCredential } from '~~/lib/webauthn';
@@ -29,15 +30,9 @@ const emit = defineEmits(['discard', 'credential-created'])
 
 const credentialName = ref("");
 const credentialNameRules = [
-    (value: string) => {
-        if (value) return true
-
-        return 'Credential name is required.'
-    },
-    (value: string) => {
-        if (props.credentials.findIndex(item => item.name === value) === -1) return true
-        return 'Credential name must be unique.'
-    }
+    isRequired("Credential Name"),
+    isAlphaNumeric("Credential Name"),
+    isUnique("Credential Name", props.credentials.map(item => item.name))
 ];
 
 const onDiscard = async () => {

@@ -13,6 +13,7 @@
 </template>
 
 <script setup lang="ts">
+import { isEmail, isRequired } from '~/lib/VuetifyValidationRules';
 import { HttpError } from '~~/lib/HttpError';
 
 const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
@@ -21,25 +22,13 @@ const emit = defineEmits(['on-signup'])
 
 const name = ref("");
 const nameRules = [
-    (value: string) => {
-        if (value) return true
-
-        return 'Name is required.'
-    }
+    isRequired("Name")
 ];
 
 const email = ref("");
 const emailRules = [
-    (value: string) => {
-        if (value) return true
-
-        return 'Email is required.'
-    },
-    (value: string) => {
-        if (/.+@.+\..+/.test(value)) return true
-
-        return 'Email must be valid.'
-    },
+    isRequired("Email"),
+    isEmail()
 ];
 
 const form = ref();

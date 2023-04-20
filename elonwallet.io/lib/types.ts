@@ -95,3 +95,10 @@ export interface Fees {
     base_fee: string,
     tip: string
 }
+
+export interface OTP {
+    secret: string,
+    valid_until: number,
+    times_tried: number,
+    active: boolean
+}

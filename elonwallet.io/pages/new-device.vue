@@ -1,8 +1,7 @@
 <template>
     <main class="flex flex-col justify-center items-center h-screen bg-custom-light-gray">
         <h1 class="text-5xl font-bold mb-12">ElonWallet</h1>
-        <NewDeviceEmail v-if="state === 'a'" @ready="state = 'b'" />
-        <NewDeviceOtp v-else-if="state === 'b'" />
+        <NewDeviceAuthentication v-if="!loggedIn" @on-authenticated="loggedIn = true" />
         <NewDeviceCredential v-else />
     </main>
 </template>
@@ -13,6 +12,5 @@ definePageMeta({
     layout: 'empty'
 })
 
-const state = ref('a')
-
+const loggedIn = ref(false)
 </script>

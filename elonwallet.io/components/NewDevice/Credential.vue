@@ -13,17 +13,15 @@
 
 <script setup lang="ts">
 import { HttpError } from '~/lib/HttpError';
+import { isAlphaNumeric, isRequired } from '~/lib/VuetifyValidationRules';
 import { registerCredential } from '~/lib/webauthn';
 const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
 
 const form = ref();
 const credentialName = ref("");
 const credentialNameRules = [
-    (value: string) => {
-        if (value) return true
-
-        return 'Credential Name is required.'
-    },
+    isRequired("Credential Name"),
+    isAlphaNumeric("Credential Name")
 ];
 
 

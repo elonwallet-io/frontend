@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import { HttpError } from '~/lib/HttpError';
 import { toWei, fromWei } from '~/lib/UnitConverter';
+import { isRequired, isValidNumber, isGreaterThan } from '~/lib/VuetifyValidationRules';
 import { UINotificationType } from '~/lib/types';
 import { solveLoginChallenge } from '~/lib/webauthn';
 
@@ -55,22 +56,9 @@ const addressOrContactEmailRules = [
 
 const amount = ref<number>();
 const amountRules = [
-    (value: any) => {
-        if (!isNaN(value))
-            return true
-
-        return 'Amount must be a valid number.'
-    },
-    (value: number) => {
-        if (value) return true
-
-        return 'Amount is required.'
-    },
-    (value: number) => {
-        if (value > 0) return true
-
-        return 'Amount must be greater than 0'
-    },
+    isRequired("Amount"),
+    isValidNumber("Amount"),
+    isGreaterThan("Amount", 0),
     (value: number) => {
         const maxAmount = parseFloat(fromWei(balance.value!, network.value!.decimals)) - parseFloat(fromWei(fees.value!.estimated_fees, network.value!.decimals))
         if (value < maxAmount) return true
@@ -81,13 +69,7 @@ const amountRules = [
 
 const contactWalletName = ref('');
 const contactWalletNameRules = [
-    (value: string) => {
-        if (value) {
-            return true
-        }
-
-        return 'Wallet Name is required.'
-    }
+    isRequired("Wallet Name")
 ];
 
 const currentContact = computed(() => {

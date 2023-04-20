@@ -34,6 +34,10 @@ const { data: credentials, error, refresh } = useAsyncDataWithCache<WebauthnCred
     return await enclaveApiClient.getCredentials();
 })
 
+onMounted(async () => {
+    await refresh();
+})
+
 watch(error, () => {
     if (error.value) {
         if (error.value instanceof HttpError) {

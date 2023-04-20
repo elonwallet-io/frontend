@@ -23,11 +23,12 @@
 <script setup lang="ts">
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { User } from '~~/lib/types';
+import { isUnique, isRequired, isEmail } from '~/lib/VuetifyValidationRules';
 
 const backendApiClient = useBackend();
 const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
 
-defineProps<{
+const props = defineProps<{
     contacts?: User[]
 }>();
 
@@ -37,16 +38,9 @@ const dialog = ref(false);
 const contactForm = ref();
 const email = ref<string>("");
 const emailRules = [
-    (value: string) => {
-        if (value) return true
-
-        return 'Email is required.'
-    },
-    (value: string) => {
-        if (/.+@.+\..+/.test(value)) return true
-
-        return 'Email must be valid.'
-    },
+    isRequired("Email"),
+    isEmail(),
+    isUnique("Contact", props.contacts?.map(item => item.email) ?? []),
     async (value: string) => {
         if (!/.+@.+\..+/.test(value)) return false
 
