@@ -34,10 +34,13 @@ const { wallets, refresh } = useWallets();
 const dialog = ref(false);
 const walletForm = ref();
 const walletName = ref("");
+const walletNames = computed(() => {
+    return wallets.value?.map(item => item.name) ?? [];
+})
 const walletNameRules = [
     isRequired("Wallet Name"),
     isAlphaNumeric("Wallet Name"),
-    isUnique("Wallet Name", wallets.value?.map(item => item.name) ?? [])
+    isUnique("Wallet Name", walletNames)
 ];
 const walletVisibility = ref(false);
 

@@ -4,7 +4,7 @@
             <span class="font-bold">My Contacts</span>
             <DialogContactForm :contacts="contacts!" @create-contact="refresh()" />
         </div>
-        <ContactsList :contacts="contacts!" />
+        <ContactsList v-if="contacts" :contacts="contacts" @on-contact-removed="refresh()" />
     </div>
 </template>
 

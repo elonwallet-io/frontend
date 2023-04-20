@@ -28,11 +28,15 @@ const props = defineProps<{
 
 const emit = defineEmits(['discard', 'credential-created'])
 
+const credentialNames = computed(() => {
+    return props.credentials.map(item => item.name)
+})
+
 const credentialName = ref("");
 const credentialNameRules = [
     isRequired("Credential Name"),
     isAlphaNumeric("Credential Name"),
-    isUnique("Credential Name", props.credentials.map(item => item.name))
+    isUnique("Credential Name", credentialNames)
 ];
 
 const onDiscard = async () => {
