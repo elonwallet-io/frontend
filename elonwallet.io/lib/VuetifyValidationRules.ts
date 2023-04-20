@@ -34,9 +34,9 @@ export function isAlphaNumeric(name: string) {
     }
 }
 
-export function isUnique(name: string, set: string[]) {
+export function isUnique(name: string, set: ComputedRef<string[]>) {
     return (value: string) => {
-        if (set.findIndex(item => item === value) === -1)
+        if (set.value.findIndex(item => item === value) === -1)
             return true
 
         return `${name} must be unique.`

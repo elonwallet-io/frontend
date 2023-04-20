@@ -8,7 +8,7 @@
             </template>
             <div class="p-4 flex flex-col gap-4 w-2/6 bg-white m-auto">
                 <span class="text-xl">Add a new Contact</span>
-                <v-form ref="contactForm" @submit.prevent>
+                <v-form ref="contactForm" validate-on="blur" @submit.prevent>
                     <v-text-field variant="solo" v-model="email" :rules="emailRules" label="Contact email address" />
                     <div class="flex justify-end">
                         <v-btn variant="text" color="primary" @click="onDiscard">Discard</v-btn>
@@ -22,11 +22,11 @@
 
 <script setup lang="ts">
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
-import { User } from '~~/lib/types';
+import { UINotificationType, User } from '~~/lib/types';
 import { isUnique, isRequired, isEmail } from '~/lib/VuetifyValidationRules';
 
 const backendApiClient = useBackend();
-const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
+const { displayNetworkErrorNotification, displayNotificationFromHttpError, displayNotification } = useNotification();
 
 const props = defineProps<{
     contacts?: User[]
@@ -36,11 +36,15 @@ const backendJWT = useBackendJWT();
 const emit = defineEmits(['create-contact'])
 const dialog = ref(false);
 const contactForm = ref();
+const contactEmails = computed(() => {
+    return props.contacts?.map(item => item.email) ?? []
+})
+
 const email = ref<string>("");
 const emailRules = [
     isRequired("Email"),
     isEmail(),
-    isUnique("Contact", props.contacts?.map(item => item.email) ?? []),
+    isUnique("Contact", contactEmails),
     async (value: string) => {
         if (!/.+@.+\..+/.test(value)) return false
 
@@ -49,7 +53,7 @@ const emailRules = [
         } catch (error) {
             if (error instanceof HttpError) {
                 if (error.type == HttpErrorType.NotFound) {
-                    return 'Email unknown'
+                    return 'User not found'
                 }
             }
         }
@@ -67,15 +71,16 @@ const onSave = async () => {
     const { valid } = await contactForm.value.validate();
     if (valid) {
         await onCreateContact(email.value);
-        emit("create-contact");
-        contactForm.value.reset();
-        dialog.value = false;
     }
 };
 
 const onCreateContact = async (email: string) => {
     try {
         await backendApiClient.createContact(email, backendJWT.value);
+        displayNotification("Contact added", `Contact ${email} has been added successfully`, UINotificationType.Success);
+        emit("create-contact");
+        contactForm.value.reset();
+        dialog.value = false;
     } catch (error) {
         if (error instanceof HttpError) {
             displayNotificationFromHttpError(error);

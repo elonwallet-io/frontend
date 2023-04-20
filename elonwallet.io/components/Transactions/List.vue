@@ -4,7 +4,7 @@
             :contacts="contacts ?? []" :current-network="currentNetwork!" :current-wallet="currentWallet!"
             :transaction="transaction" />
     </v-list>
-    <v-pagination v-if="transactions?.length" :length="transactions?.length / 10" variant="text" v-model="page" />
+    <v-pagination v-if="transactions?.length" :length="length" variant="text" v-model="page" />
 </template>
 
 <script setup lang="ts">
@@ -18,6 +18,8 @@ const { displayNetworkErrorNotification, displayNotificationFromHttpError } = us
 const currentNetwork = useCurrentNetwork();
 const currentWallet = useCurrentWallet();
 const { contacts } = useContacts();
+
+const stepSize = 10;
 const page = ref(1);
 
 const { data: transactions, error, refresh } = useAsyncDataWithCache<Transaction[]>('transactions', async () => {
@@ -40,9 +42,12 @@ watch(error, () => {
 })
 
 const pagedTransactions = computed(() => {
-    const stepSize = 10;
     const start = (page.value - 1) * stepSize;
     return transactions.value?.slice(start, start + stepSize) ?? []
+})
+
+const length = computed(() => {
+    return Math.ceil((transactions.value?.length ?? 0) / stepSize)
 })
 
 let interval: number;

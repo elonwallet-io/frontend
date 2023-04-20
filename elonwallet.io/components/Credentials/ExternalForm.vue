@@ -24,7 +24,6 @@ const otpSecret = ref("");
 
 watch(otp, () => {
     if (otp.value) {
-        console.log(otp.value)
         otpSecret.value = otp.value.secret;
     }
 })

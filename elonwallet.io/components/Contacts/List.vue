@@ -1,20 +1,31 @@
 <template>
     <v-list :lines="false">
-        <v-list-item v-for="contact in contacts" :key="contact.name" class="border mx-4 my-2"
-            @click="onClickContact(contact)">
-            <ContactsElement :contact="contact" />
+        <v-list-item v-for="contact in pagedContacts" :key="contact.name" class="border mx-4 my-2">
+            <ContactsElement :contact="contact" @on-contact-removed="$emit('on-contact-removed')" />
         </v-list-item>
     </v-list>
+    <v-pagination :length="length" variant="text" v-model="page" />
 </template>
 
 <script setup lang="ts">
 import { User } from '~~/lib/types';
 
-defineProps<{
-    contacts?: User[]
+const stepSize = 5;
+
+const props = defineProps<{
+    contacts: User[]
 }>();
 
-const onClickContact = (contact: User) => {
-    console.log(contact);
-};
+defineEmits(['on-contact-removed'])
+
+const page = ref(1);
+const pagedContacts = computed(() => {
+    const start = (page.value - 1) * stepSize;
+    return props.contacts?.slice(start, start + stepSize) ?? []
+});
+
+const length = computed(() => {
+    return Math.ceil(props.contacts.length / stepSize)
+})
+
 </script>
