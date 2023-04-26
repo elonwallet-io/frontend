@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { WebauthnCredential } from '~~/lib/types';
-const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
+const { displayNotificationFromError } = useNotification();
 const enclaveApiClient = useEnclave();
 
 const { data: credentials, error, refresh } = useAsyncDataWithCache<WebauthnCredential[]>('credentials', async () => {
@@ -40,16 +40,12 @@ onMounted(async () => {
 
 watch(error, () => {
     if (error.value) {
-        if (error.value instanceof HttpError) {
-            if (error.value.type === HttpErrorType.Unauthorized) {
+        displayNotificationFromError(error);
+        if (error instanceof HttpError) {
+            if (error.type === HttpErrorType.Unauthorized)
                 navigateTo("/login")
-            } else if (error.value.type == HttpErrorType.Forbidden) {
+            else if (error.type === HttpErrorType.Forbidden)
                 navigateTo("/reauthenticate?redirect=%2Fcredentials")
-            } else {
-                displayNotificationFromHttpError(error.value);
-            }
-        } else {
-            displayNetworkErrorNotification();
         }
     }
 })
@@ -58,19 +54,15 @@ const onClickDelete = async (credential: WebauthnCredential) => {
     try {
         await enclaveApiClient.removeCredential(credential.name);
     } catch (err) {
-        if (err instanceof HttpError) {
-            if (err.type === HttpErrorType.Unauthorized) {
+        displayNotificationFromError(error);
+        if (error instanceof HttpError) {
+            if (error.type === HttpErrorType.Unauthorized)
                 navigateTo("/login")
-            } else if (err.type == HttpErrorType.Forbidden) {
+            else if (error.type === HttpErrorType.Forbidden)
                 navigateTo("/reauthenticate?redirect=%2Fcredentials")
-            } else {
-                displayNotificationFromHttpError(err);
-            }
-        } else {
-            displayNetworkErrorNotification();
         }
     }
 
-    credentials.value = credentials.value!.filter(item => item.name !== credential.name)
+    await refresh();
 }
 </script>

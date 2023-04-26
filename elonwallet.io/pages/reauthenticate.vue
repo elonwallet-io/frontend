@@ -12,34 +12,30 @@
 
 <script setup lang="ts">
 import { solveLoginChallenge } from '~/lib/webauthn'
-import { HttpError } from '~~/lib/HttpError';
 
 definePageMeta({
     layout: 'empty'
 })
-const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
+const { displayNotificationFromError } = useNotification();
 
 const route = useRoute();
 const redirect = route.query.redirect?.toString() ?? "/";
 
 const onReauthentication = async () => {
-    if (window.PublicKeyCredential) {
-        try {
-            const enclaveApiClient = useEnclave();
-
-            const options = await enclaveApiClient.loginInitialize();
-            const credential = await solveLoginChallenge(options);
-            await enclaveApiClient.loginFinalize(credential);
-
-            navigateTo(redirect)
-        }
-        catch (error) {
-            if (error instanceof HttpError) {
-                displayNotificationFromHttpError(error);
-            } else {
-                displayNetworkErrorNotification();
-            }
-        }
+    try {
+        await reauthenticate();
+        navigateTo(redirect)
     }
+    catch (error) {
+        displayNotificationFromError(error);
+    }
+}
+
+const reauthenticate = async () => {
+    const enclaveApiClient = useEnclave();
+
+    const options = await enclaveApiClient.loginInitialize();
+    const credential = await solveLoginChallenge(options);
+    await enclaveApiClient.loginFinalize(credential);
 }
 </script>

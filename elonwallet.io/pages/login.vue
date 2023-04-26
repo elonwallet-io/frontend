@@ -21,12 +21,11 @@
 <script setup lang="ts">
 import { isEmail, isRequired } from '~/lib/VuetifyValidationRules';
 import { solveLoginChallenge } from '~/lib/webauthn'
-import { HttpError } from '~~/lib/HttpError';
 
 definePageMeta({
     layout: 'empty'
 })
-const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
+const { displayNotificationFromError, displayNotification } = useNotification();
 
 const email = ref("");
 const emailRules = [
@@ -38,31 +37,34 @@ const form = ref();
 
 const onLogin = async () => {
     const { valid } = await form.value.validate()
-    if (valid && window.PublicKeyCredential) {
-        try {
-            const backendApiClient = useBackend();
-            const enclaveURL = useEnclaveURL();
-            enclaveURL.value = await backendApiClient.getEnclaveURL(email.value)
+    if (!valid)
+        return;
+    if (!window.PublicKeyCredential)
+        displayNotification("Webauthn not supported", "Your browser does not seem to support the webauthn standard");
 
-            const enclaveApiClient = useEnclave();
-            const options = await enclaveApiClient.loginInitialize();
-            const credential = await solveLoginChallenge(options);
-            const backendJWT = await enclaveApiClient.loginFinalize(credential);
-
-            //Set this here, because we need to be able to get this when a user refreshes the main page without reauth
-            localStorage.setItem("email", email.value);
-            localStorage.setItem("enclave_url", enclaveURL.value);
-            localStorage.setItem("backend_jwt", backendJWT)
-
-            navigateTo("/")
-        }
-        catch (error) {
-            if (error instanceof HttpError) {
-                displayNotificationFromHttpError(error);
-            } else {
-                displayNetworkErrorNotification();
-            }
-        }
+    try {
+        await login();
+        navigateTo("/")
     }
+    catch (error) {
+        displayNotificationFromError(error);
+    }
+}
+
+
+const login = async () => {
+    const backendApiClient = useBackend();
+    const enclaveURL = useEnclaveURL();
+    enclaveURL.value = await backendApiClient.getEnclaveURL(email.value)
+
+    const enclaveApiClient = useEnclave();
+    const options = await enclaveApiClient.loginInitialize();
+    const credential = await solveLoginChallenge(options);
+    const backendJWT = await enclaveApiClient.loginFinalize(credential);
+
+    //Set this here, because we need to be able to get this when a user refreshes the main page without reauth
+    localStorage.setItem("email", email.value);
+    localStorage.setItem("enclave_url", enclaveURL.value);
+    localStorage.setItem("backend_jwt", backendJWT)
 }
 </script>
