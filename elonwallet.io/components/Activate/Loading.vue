@@ -6,9 +6,7 @@
 </template>
 
 <script setup lang="ts">
-
-import { HttpError } from '~/lib/HttpError';
-const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
+const { displayNotificationFromError } = useNotification();
 
 const props = defineProps<{
     email: string,
@@ -19,19 +17,18 @@ const emit = defineEmits(['registered']);
 
 onMounted(async () => {
     try {
-
-        const backendApiClient = useBackend();
-        await backendApiClient.activateUser(props.email, props.activationString);
-        const enclaveURL = useEnclaveURL();
-        enclaveURL.value = await backendApiClient.getEnclaveURL(props.email)
+        await activateUser();
         emit('registered');
     }
     catch (error) {
-        if (error instanceof HttpError) {
-            displayNotificationFromHttpError(error);
-        } else {
-            displayNetworkErrorNotification();
-        }
+        displayNotificationFromError(error);
     }
 })
+
+const activateUser = async () => {
+    const backendApiClient = useBackend();
+    await backendApiClient.activateUser(props.email, props.activationString);
+    const enclaveURL = useEnclaveURL();
+    enclaveURL.value = await backendApiClient.getEnclaveURL(props.email)
+}
 </script>

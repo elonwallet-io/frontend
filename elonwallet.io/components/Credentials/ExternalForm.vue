@@ -6,52 +6,31 @@
         <v-form class="mt-4" ref="credentialForm" @submit.prevent>
             <v-text-field variant="solo" v-model="otpSecret" label="One Time Password" readonly />
             <div class="flex justify-end">
-                <v-btn variant="text" color="primary" @click="onDiscard">Discard</v-btn>
+                <v-btn variant="text" color="primary" @click="$emit('discard')">Discard</v-btn>
             </div>
         </v-form>
     </div>
 </template>
 
 <script setup lang="ts">
+import { HttpError, HttpErrorType } from '~/lib/HttpError';
 import { OTP } from '~/lib/types';
-import { HttpError, HttpErrorType } from '~~/lib/HttpError';
-const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
 
+const { displayNotificationFromError } = useNotification();
 
-const emit = defineEmits(['discard'])
+defineEmits(['discard'])
 const otp = ref<OTP>();
-const otpSecret = ref("");
-
-watch(otp, () => {
-    if (otp.value) {
-        otpSecret.value = otp.value.secret;
-    }
-})
-
-
-const onDiscard = async () => {
-    emit('discard');
-}
+const otpSecret = computed(() => otp.value?.secret)
 
 onMounted(async () => {
     try {
         const enclaveApiClient = useEnclave();
         otp.value = await enclaveApiClient.getOTP();
-        if (!otp.value.active) {
-            await enclaveApiClient.createOTP();
-            otp.value = await enclaveApiClient.getOTP();
-        }
-    }
-    catch (error) {
-        if (error instanceof HttpError) {
-            displayNotificationFromHttpError(error);
-            if (error.type === HttpErrorType.Unauthorized) {
-                navigateTo("/login")
-            }
-        } else {
-            displayNetworkErrorNotification();
+    } catch (error) {
+        displayNotificationFromError(error);
+        if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
+            navigateTo("/login")
         }
     }
 })
-
 </script>

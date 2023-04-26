@@ -17,27 +17,20 @@
 </template>
 
 <script setup lang="ts">
-import { HttpError } from '~/lib/HttpError';
 import { UINotificationType } from '~/lib/types';
 
-const { displayNetworkErrorNotification, displayNotificationFromHttpError, displayNotification } = useNotification();
+const { displayNotificationFromError, displayNotification } = useNotification();
 const backendApiClient = useBackend();
 const email = useEmail();
 
 
 const onResendActivationLink = async () => {
     try {
-        if (email.value) {
-            await backendApiClient.resendActivationLink(email.value);
-            displayNotification("Resent Activation Email", "The activation email has been resent to your inbox.", UINotificationType.Success);
-        }
+        await backendApiClient.resendActivationLink(email.value);
+        displayNotification("Resent Activation Email", "The activation email has been resent to your inbox.", UINotificationType.Success);
     }
     catch (error) {
-        if (error instanceof HttpError) {
-            displayNotificationFromHttpError(error);
-        } else {
-            displayNetworkErrorNotification();
-        }
+        displayNotificationFromError(error)
     }
 }
 </script>

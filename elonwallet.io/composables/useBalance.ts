@@ -3,7 +3,7 @@ import { HttpError, HttpErrorType } from "~/lib/HttpError";
 export default function () {
     const backendJWT = useBackendJWT();
     const backendApiClient = useBackend();
-    const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
+    const { displayNotificationFromError } = useNotification();
     const network = useCurrentNetwork();
     const wallet = useCurrentWallet();
 
@@ -13,13 +13,9 @@ export default function () {
 
     watch(error, () => {
         if (error.value) {
-            if (error.value instanceof HttpError) {
-                displayNotificationFromHttpError(error.value);
-                if (error.value.type === HttpErrorType.Unauthorized) {
-                    navigateTo("/login")
-                }
-            } else {
-                displayNetworkErrorNotification();
+            displayNotificationFromError(error);
+            if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
+                navigateTo("/login")
             }
         }
     });

@@ -26,7 +26,7 @@ import { UINotificationType, User } from '~~/lib/types';
 import { isUnique, isRequired, isEmail } from '~/lib/VuetifyValidationRules';
 
 const backendApiClient = useBackend();
-const { displayNetworkErrorNotification, displayNotificationFromHttpError, displayNotification } = useNotification();
+const { displayNotificationFromError, displayNotification } = useNotification();
 
 const props = defineProps<{
     contacts?: User[]
@@ -36,11 +36,9 @@ const backendJWT = useBackendJWT();
 const emit = defineEmits(['create-contact'])
 const dialog = ref(false);
 const contactForm = ref();
-const contactEmails = computed(() => {
-    return props.contacts?.map(item => item.email) ?? []
-})
+const contactEmails = computed(() => props.contacts?.map(item => item.email) ?? [])
 
-const email = ref<string>("");
+const email = ref("");
 const emailRules = [
     isRequired("Email"),
     isEmail(),
@@ -78,17 +76,13 @@ const onCreateContact = async (email: string) => {
     try {
         await backendApiClient.createContact(email, backendJWT.value);
         displayNotification("Contact added", `Contact ${email} has been added successfully`, UINotificationType.Success);
-        emit("create-contact");
-        contactForm.value.reset();
         dialog.value = false;
+        contactForm.value.reset();
+        emit("create-contact");
     } catch (error) {
-        if (error instanceof HttpError) {
-            displayNotificationFromHttpError(error);
-            if (error.type === HttpErrorType.Unauthorized) {
-                navigateTo("/login")
-            }
-        } else {
-            displayNetworkErrorNotification();
+        displayNotificationFromError(error);
+        if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
+            navigateTo("/login")
         }
     }
 }

@@ -10,10 +10,9 @@
 
 
 <script setup lang="ts">
-import { HttpError } from '~/lib/HttpError';
 import { isEmail, isOTP, isRequired } from '~/lib/VuetifyValidationRules';
 
-const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
+const { displayNotificationFromError, displayNotification } = useNotification();
 
 const emit = defineEmits(['on-authenticated']);
 
@@ -33,27 +32,24 @@ const form = ref();
 
 const onLogin = async () => {
     const { valid } = await form.value.validate();
-    if (valid) {
+    if (!valid)
+        return;
+
+    try {
         await loginWithOTP();
+        emit('on-authenticated');
+    } catch (error) {
+        displayNotificationFromError(error);
     }
+
 }
 
 const loginWithOTP = async () => {
-    try {
-        const backendApiClient = useBackend();
-        const enclaveURL = useEnclaveURL();
-        enclaveURL.value = await backendApiClient.getEnclaveURL(email.value)
+    const backendApiClient = useBackend();
+    const enclaveURL = useEnclaveURL();
+    enclaveURL.value = await backendApiClient.getEnclaveURL(email.value)
 
-        const enclaveApiClient = useEnclave();
-        await enclaveApiClient.loginWithOTP(otp.value);
-        emit('on-authenticated');
-    }
-    catch (error) {
-        if (error instanceof HttpError) {
-            displayNotificationFromHttpError(error);
-        } else {
-            displayNetworkErrorNotification();
-        }
-    }
+    const enclaveApiClient = useEnclave();
+    await enclaveApiClient.loginWithOTP(otp.value);
 }
 </script>

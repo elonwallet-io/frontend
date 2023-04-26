@@ -12,10 +12,9 @@
 </template>
 
 <script setup lang="ts">
-import { HttpError } from '~/lib/HttpError';
 import { isAlphaNumeric, isRequired } from '~/lib/VuetifyValidationRules';
 import { registerCredential } from '~/lib/webauthn';
-const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
+const { displayNotificationFromError, displayNotification } = useNotification();
 
 const form = ref();
 const credentialName = ref("");
@@ -27,23 +26,26 @@ const credentialNameRules = [
 
 const onAddCredential = async () => {
     const { valid } = await form.value.validate()
-    if (valid && window.PublicKeyCredential) {
-        try {
-            const enclaveApiClient = useEnclave();
+    if (!valid)
+        return;
 
-            const options = await enclaveApiClient.createCredentialInitialize();
-            const credential = await registerCredential(options);
-            await enclaveApiClient.createCredentialFinalize({ name: credentialName.value, creation_response: credential });
+    if (!window.PublicKeyCredential)
+        displayNotification("Webauthn not supported", "Your browser does not seem to support the webauthn standard");
 
-            navigateTo("/login")
-        }
-        catch (error) {
-            if (error instanceof HttpError) {
-                displayNotificationFromHttpError(error);
-            } else {
-                displayNetworkErrorNotification();
-            }
-        }
+    try {
+        await addCredential();
+        navigateTo("/login")
     }
+    catch (error) {
+        displayNotificationFromError(error);
+    }
+}
+
+const addCredential = async () => {
+    const enclaveApiClient = useEnclave();
+
+    const options = await enclaveApiClient.createCredentialInitialize();
+    const credential = await registerCredential(options);
+    await enclaveApiClient.createCredentialFinalize({ name: credentialName.value, creation_response: credential });
 }
 </script>

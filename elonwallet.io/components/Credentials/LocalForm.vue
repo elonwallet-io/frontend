@@ -14,11 +14,11 @@
 </template>
 
 <script setup lang="ts">
+import { HttpError, HttpErrorType } from '~/lib/HttpError';
 import { isUnique, isRequired, isAlphaNumeric } from '~/lib/VuetifyValidationRules';
-import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { WebauthnCredential, UINotificationType } from '~~/lib/types';
-import { registerCredential, UrlEncodedPublicKeyCredential } from '~~/lib/webauthn';
-const { displayNotification, displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
+import { registerCredential } from '~~/lib/webauthn';
+const { displayNotification, displayNotificationFromError } = useNotification();
 
 const credentialForm = ref();
 
@@ -28,9 +28,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['discard', 'credential-created'])
 
-const credentialNames = computed(() => {
-    return props.credentials.map(item => item.name)
-})
+const credentialNames = computed(() => props.credentials.map(item => item.name))
 
 const credentialName = ref("");
 const credentialNameRules = [
@@ -46,34 +44,29 @@ const onDiscard = async () => {
 
 const onSave = async () => {
     const { valid } = await credentialForm.value.validate();
-    if (valid) {
+    if (!valid)
+        return;
+
+    try {
         await createCredential(credentialName.value);
+        displayNotification("Credential created", `Credential ${credentialName.value} has been created successfully`, UINotificationType.Success);
         credentialForm.value.reset();
         emit('credential-created');
+    } catch (error) {
+        displayNotificationFromError(error);
+        if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
+            navigateTo("/login")
+        }
     }
 };
 
 const createCredential = async (name: string) => {
-    try {
-        const enclaveApiClient = useEnclave();
-
-        const options = await enclaveApiClient.createCredentialInitialize();
-        const credential: UrlEncodedPublicKeyCredential = await registerCredential(options);
-        await enclaveApiClient.createCredentialFinalize({
-            name: name,
-            creation_response: credential
-        });
-        displayNotification("Credential created", `Credential ${name} has been created successfully`, UINotificationType.Success);
-    }
-    catch (error) {
-        if (error instanceof HttpError) {
-            displayNotificationFromHttpError(error);
-            if (error.type === HttpErrorType.Unauthorized) {
-                navigateTo("/login")
-            }
-        } else {
-            displayNetworkErrorNotification();
-        }
-    }
+    const enclaveApiClient = useEnclave();
+    const options = await enclaveApiClient.createCredentialInitialize();
+    const credential = await registerCredential(options);
+    await enclaveApiClient.createCredentialFinalize({
+        name: name,
+        creation_response: credential
+    });
 };
 </script>

@@ -3,7 +3,7 @@ import { Wallet } from "~~/lib/types";
 
 export default function () {
     const enclaveApiClient = useEnclave();
-    const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
+    const { displayNotificationFromError } = useNotification();
 
     const { data: wallets, error, refresh } = useAsyncDataWithCache<Wallet[]>("wallets", async () => {
         return await enclaveApiClient.getWallets();
@@ -11,13 +11,9 @@ export default function () {
 
     watch(error, () => {
         if (error.value) {
-            if (error.value instanceof HttpError) {
-                displayNotificationFromHttpError(error.value);
-                if (error.value.type === HttpErrorType.Unauthorized) {
-                    navigateTo("/login")
-                }
-            } else {
-                displayNetworkErrorNotification();
+            displayNotificationFromError(error);
+            if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
+                navigateTo("/login")
             }
         }
     });
