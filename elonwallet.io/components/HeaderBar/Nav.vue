@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-const { displayNetworkErrorNotification } = useNotification();
+const { displayNotificationFromError } = useNotification();
 
 interface Setting {
     name: string,
@@ -65,7 +65,7 @@ const onLogout = async () => {
         navigateTo("/login")
     }
     catch (error) {
-        displayNetworkErrorNotification();
+        displayNotificationFromError(error);
     }
     navigateTo("/login")
 }

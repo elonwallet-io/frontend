@@ -26,7 +26,6 @@
 </template>
 
 <script setup lang="ts">
-import { HttpError } from '~/lib/HttpError';
 import { toWei, fromWei } from '~/lib/UnitConverter';
 import { isRequired, isValidNumber, isGreaterThan } from '~/lib/VuetifyValidationRules';
 import { UINotificationType } from '~/lib/types';
@@ -35,10 +34,9 @@ import { solveLoginChallenge } from '~/lib/webauthn';
 const wallet = useCurrentWallet();
 const network = useCurrentNetwork();
 const { contacts } = useContacts();
-const enclaveApiClient = useEnclave();
 const { balance } = useBalance();
 const { fees } = useFees();
-const { displayNetworkErrorNotification, displayNotificationFromHttpError, displayNotification } = useNotification();
+const { displayNotificationFromError, displayNotification } = useNotification();
 const transactionForm = ref();
 const emit = defineEmits(['on-close'])
 
@@ -72,19 +70,10 @@ const contactWalletNameRules = [
     isRequired("Wallet Name")
 ];
 
-const currentContact = computed(() => {
-    return contacts.value?.find(item => item.email === addressOrContactEmail.value);
-})
+const currentContact = computed(() => contacts.value?.find(item => item.email === addressOrContactEmail.value))
+const contactWalletNames = computed(() => currentContact.value?.wallets.map(item => item.name));
 
-const contactWalletNames = computed(() => {
-    return currentContact.value?.wallets.map(item => item.name);
-});
-
-watch(addressOrContactEmail, () => {
-    if (contactWalletName.value) {
-        contactWalletName.value = "";
-    }
-})
+watch(addressOrContactEmail, () => contactWalletName.value = "")
 
 const receiverAddress = computed(() => {
     if (currentContact.value && contactWalletName.value) {
@@ -102,37 +91,32 @@ const onDiscard = async () => {
 
 const onSend = async () => {
     const { valid } = await transactionForm.value.validate();
-    if (valid) {
-        if (await sendTransaction()) {
-            transactionForm.value.reset();
-            emit('on-close');
-        }
+    if (!valid)
+        return;
+
+    try {
+        await sendTransaction()
+        displayNotification("Transaction sent", "Successfully sent the transaction. Your balance and recent transactions will update soon.", UINotificationType.Success)
+        transactionForm.value.reset();
+        emit('on-close');
+    } catch (error) {
+        displayNotificationFromError(error);
     }
 };
 
 const sendTransaction = async () => {
-    try {
-        const options = await enclaveApiClient.transactionInitialize();
-        const credential = await solveLoginChallenge(options);
-        await enclaveApiClient.transactionFinalize({
-            assertion_response: credential,
-            transaction_info: {
-                amount: toWei(amount.value!.toString()),
-                chain: network.value!.chain,
-                from: wallet.value!.address,
-                to: receiverAddress.value
-            }
-        });
-        displayNotification("Transaction sent", "Successfully sent the transaction. Your balance and recent transactions will update soon.", UINotificationType.Success)
-        return true;
-    }
-    catch (error) {
-        if (error instanceof HttpError) {
-            displayNotificationFromHttpError(error);
-        } else {
-            displayNetworkErrorNotification();
+    const enclaveApiClient = useEnclave();
+
+    const options = await enclaveApiClient.transactionInitialize();
+    const credential = await solveLoginChallenge(options);
+    await enclaveApiClient.transactionFinalize({
+        assertion_response: credential,
+        transaction_info: {
+            amount: toWei(amount.value!.toString()),
+            chain: network.value!.chain,
+            from: wallet.value!.address,
+            to: receiverAddress.value
         }
-        return false;
-    }
+    });
 }
 </script>

@@ -21,15 +21,9 @@ const currentWallet = useCurrentWallet();
 const { balance, refresh } = useBalance();
 defineEmits(['on-transaction'])
 
-watch(currentNetwork, async () => {
-    if (currentNetwork.value && currentWallet.value)
-        await refresh();
+watch([currentNetwork, currentWallet], async () => {
+    await refresh();
 })
-
-watch(currentWallet, async () => {
-    if (currentNetwork.value && currentWallet.value)
-        await refresh();
-});
 
 let interval: number;
 

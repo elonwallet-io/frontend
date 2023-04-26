@@ -48,10 +48,7 @@ onUnmounted(async () => {
     window.clearInterval(interval);
 })
 
-watch(wallet, async () => {
-    await refresh();
-})
-watch(network, async () => {
+watch([wallet, network], async () => {
     await refresh();
 })
 

@@ -281,22 +281,6 @@ export class EnclaveApiClient {
         }
     }
 
-    async createOTP(): Promise<void> {
-        const resp = await fetch(`${this.baseURL}/otp`, {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-        });
-
-        if (resp.status !== 201) {
-            const error = await HttpError.fromResponse(resp);
-            throw error;
-        }
-    }
-
     async getOTP(): Promise<OTP> {
         const resp = await fetch(`${this.baseURL}/otp`, {
             method: "GET",

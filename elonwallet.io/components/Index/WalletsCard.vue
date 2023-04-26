@@ -5,10 +5,10 @@
             <DialogWalletForm />
         </div>
         <div class="flex gap-2 pt-2 mx-4">
-            <v-select class="w-1/2" label="Network" variant="solo" color="primary" :items="networks!.map(item => item.name)"
-                v-model="networkName" />
-            <v-select class="w-1/2" label="Wallet" variant="solo" color="primary" :items="wallets!.map(item => item.name)"
-                v-model="walletName" />
+            <v-select class="w-1/2" label="Network" variant="solo" color="primary" :items="networkNames"
+                v-model="currentNetworkName" />
+            <v-select class="w-1/2" label="Wallet" variant="solo" color="primary" :items="walletNames"
+                v-model="currentWalletName" />
         </div>
     </div>
 </template>
@@ -19,24 +19,24 @@ const currentNetwork = useCurrentNetwork();
 const { networks } = useNetworks();
 const { wallets } = useWallets();
 
-const walletName = ref(currentWallet.value!.name);
-const networkName = ref(currentNetwork.value!.name);
-
-watch(currentWallet, () => {
-    if (currentWallet.value)
-        walletName.value = currentWallet.value.name
+const currentWalletName = computed({
+    get() {
+        return currentWallet.value.name;
+    },
+    set(newValue) {
+        currentWallet.value = wallets.value!.find(w => w.name === newValue)!;
+    }
 });
 
-watch(currentNetwork, () => {
-    if (currentNetwork.value)
-        networkName.value = currentNetwork.value.name
-});
+const currentNetworkName = computed({
+    get() {
+        return currentNetwork.value.name;
+    },
+    set(newValue) {
+        currentNetwork.value = networks.value!.find(n => n.name === newValue)!;
+    }
+})
 
-watch(walletName, () => {
-    currentWallet.value = wallets.value!.find((w) => w.name === walletName.value)!;
-});
-
-watch(networkName, () => {
-    currentNetwork.value = (networks.value!.find((n) => n.name === networkName.value))!;
-});
+const networkNames = computed(() => networks.value?.map(n => n.name))
+const walletNames = computed(() => wallets.value?.map(w => w.name))
 </script>

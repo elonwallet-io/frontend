@@ -12,7 +12,15 @@ export default function () {
         }
     }
 
-    const displayNotificationFromHttpError = (error: HttpError) => {
+    const displayNotificationFromError = (error: unknown) => {
+        if (error instanceof HttpError) {
+            displayHttpErrorNotificaton(error);
+        } else {
+            displayGenericErrorNotification();
+        }
+    }
+
+    const displayHttpErrorNotificaton = (error: HttpError) => {
         switch (error.type) {
             case HttpErrorType.InternalServerError:
                 displayNotification(
@@ -61,17 +69,16 @@ export default function () {
         }
     }
 
-    const displayNetworkErrorNotification = () => {
+    const displayGenericErrorNotification = () => {
         displayNotification(
-            "Network Error",
-            "Oops! There seems to be a problem with your network.",
+            "Unknown Error",
+            "Oops! An unknown error has occured",
             UINotificationType.Error
         );
     }
 
     return {
         displayNotification,
-        displayNotificationFromHttpError,
-        displayNetworkErrorNotification
+        displayNotificationFromError
     }
 }

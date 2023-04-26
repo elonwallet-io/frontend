@@ -3,7 +3,7 @@ import { Network } from "~~/lib/types";
 
 export default function () {
     const enclaveApiClient = useEnclave();
-    const { displayNetworkErrorNotification, displayNotificationFromHttpError } = useNotification();
+    const { displayNotificationFromError } = useNotification();
 
     const { data: networks, error, refresh } = useAsyncDataWithCache<Network[]>("networks", async () => {
         return await enclaveApiClient.getNetworks();
@@ -11,13 +11,9 @@ export default function () {
 
     watch(error, () => {
         if (error.value) {
-            if (error.value instanceof HttpError) {
-                displayNotificationFromHttpError(error.value);
-                if (error.value.type === HttpErrorType.Unauthorized) {
-                    navigateTo("/login")
-                }
-            } else {
-                displayNetworkErrorNotification();
+            displayNotificationFromError(error);
+            if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
+                navigateTo("/login")
             }
         }
     });

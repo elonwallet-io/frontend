@@ -14,9 +14,8 @@
 
 <script setup lang="ts">
 import { isEmail, isRequired } from '~/lib/VuetifyValidationRules';
-import { HttpError } from '~~/lib/HttpError';
 
-const { displayNotificationFromHttpError, displayNetworkErrorNotification } = useNotification();
+const { displayNotificationFromError } = useNotification();
 const userEmail = useEmail();
 const emit = defineEmits(['on-signup'])
 
@@ -35,21 +34,22 @@ const form = ref();
 
 const onSignup = async () => {
     const { valid } = await form.value.validate()
-    if (valid) {
-        try {
-            const backendApiClient = useBackend();
+    if (!valid)
+        return;
 
-            await backendApiClient.createUser(name.value, email.value);
-            userEmail.value = email.value;
-            emit('on-signup');
-        }
-        catch (error) {
-            if (error instanceof HttpError) {
-                displayNotificationFromHttpError(error);
-            } else {
-                displayNetworkErrorNotification();
-            }
-        }
+    try {
+        await signup();
+        emit('on-signup');
     }
+    catch (error) {
+        displayNotificationFromError(error);
+    }
+}
+
+const signup = async () => {
+    const backendApiClient = useBackend();
+
+    await backendApiClient.createUser(name.value, email.value);
+    userEmail.value = email.value;
 }
 </script>

@@ -4,7 +4,7 @@
             <ContactsElement :contact="contact" @on-contact-removed="$emit('on-contact-removed')" />
         </v-list-item>
     </v-list>
-    <v-pagination :length="length" variant="text" v-model="page" />
+    <v-pagination v-if="length" :length="length" variant="text" v-model="page" />
 </template>
 
 <script setup lang="ts">
@@ -24,8 +24,6 @@ const pagedContacts = computed(() => {
     return props.contacts?.slice(start, start + stepSize) ?? []
 });
 
-const length = computed(() => {
-    return Math.ceil(props.contacts.length / stepSize)
-})
+const length = computed(() => Math.ceil(props.contacts.length / stepSize))
 
 </script>
