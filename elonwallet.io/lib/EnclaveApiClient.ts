@@ -316,4 +316,24 @@ export class EnclaveApiClient {
             throw error;
         }
     }
+
+    async createPersonalSignature(message: string, chain: string, from: string): Promise<string> {
+        const resp = await fetch(`${this.baseURL}/sign/personal`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ message: message, chain: chain, from: from })
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson.signature;
+    }
 }
