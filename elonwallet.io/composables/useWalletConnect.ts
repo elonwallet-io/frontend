@@ -3,6 +3,9 @@ import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
 import Client, { Web3Wallet } from '@walletconnect/web3wallet'
 import { SignClientTypes, SessionTypes } from '@walletconnect/types'
 import { HttpError, HttpErrorType } from '~/lib/HttpError';
+import { solveLoginChallenge } from '~/lib/webauthn';
+import { isHexString, toUtf8String } from 'ethers';
+import { WalletConnectTransactionParams } from '~/lib/types';
 
 export default function () {
     const web3wallet = ref<Client>();
@@ -44,13 +47,13 @@ export default function () {
         await web3wallet.value!.pair({ uri })
     }
 
-    const rejectSessionRequest = async (id: number, topic: string) => {
+    const rejectSessionRequest = async (id: number, topic: string, message: string) => {
         const response = {
             id,
             jsonrpc: '2.0',
             error: {
                 code: 5000,
-                message: 'User rejected.'
+                message: message
             }
         }
 
@@ -58,9 +61,9 @@ export default function () {
         await web3wallet.value!.respondSessionRequest({ topic, response })
     }
 
-    const signMessage = async (message: string, chain: string, from: string): Promise<string> => {
+    const signMessage = async (message: string, from: string): Promise<string> => {
         try {
-            const signature = await enclaveApiClient.createPersonalSignature(message, "0x1", from);
+            const signature = await enclaveApiClient.createPersonalSignature(message, from);
             return signature;
         } catch (error) {
             displayNotificationFromError(error);
@@ -77,14 +80,87 @@ export default function () {
         let signature = "";
 
         if (request.method === "eth_sign")
-            signature = await signMessage(request.params[1], "0x1", request.params[0]);
+            signature = await signMessage(request.params[1], request.params[0]);
         else
-            signature = await signMessage(request.params[0], "0x1", request.params[1]);
+            signature = await signMessage(request.params[0], request.params[1]);
 
 
         const response = { id, result: signature, jsonrpc: '2.0' }
         console.log(response)
         await web3wallet.value!.respondSessionRequest({ topic, response })
+    }
+
+    const onSendTransaction = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
+        const { topic, params, id } = requestEvent
+        const enclaveApiClient = useEnclave();
+        const signParams: WalletConnectTransactionParams = params.request.params[0];
+
+        try {
+            const options = await enclaveApiClient.sendTransactionInitialize();
+            const credential = await solveLoginChallenge(options);
+
+            if (signParams.data !== "0x") {
+                await rejectSessionRequest(id, topic, "ERC20 is currently not supported");
+            }
+
+            const tx = await enclaveApiClient.sendTransactionFinalize({
+                assertion_response: credential,
+                transaction_params: {
+                    chain: "0x5",
+                    from: signParams.from,
+                    to: signParams.to,
+                    gas: BigInt(signParams.gasLimit ?? "").toString(),
+                    gas_price: BigInt(signParams.gasPrice ?? "").toString(),
+                    nonce: BigInt(signParams.nonce ?? "").toString(),
+                    value: BigInt(signParams.value ?? "").toString()
+                }
+            });
+
+            const response = { id, result: tx, jsonrpc: '2.0' }
+            console.log(response)
+            await web3wallet.value!.respondSessionRequest({ topic, response })
+        } catch (error) {
+            displayNotificationFromError(error);
+            await rejectSessionRequest(id, topic, "An unknown error occured");
+        }
+    }
+
+    const onSignTransaction = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
+        const { topic, params, id } = requestEvent
+        const enclaveApiClient = useEnclave();
+        const signParams: WalletConnectTransactionParams = params.request.params[0];
+
+        if (signParams.data !== "0x") {
+            await rejectSessionRequest(id, topic, "ERC20 is currently not supported");
+        }
+
+        //TODO fix 'invalid remainder' bug
+
+        try {
+            const options = await enclaveApiClient.signTransactionInitialize();
+            const credential = await solveLoginChallenge(options);
+            const txParams = {
+                assertion_response: credential,
+                transaction_params: {
+                    chain: "0x5",
+                    from: signParams.from,
+                    to: signParams.to,
+                    gas: BigInt(signParams.gasLimit ?? "").toString(),
+                    gas_price: BigInt(signParams.gasPrice ?? "").toString(),
+                    nonce: BigInt(signParams.nonce ?? "").toString(),
+                    value: BigInt(signParams.value ?? "").toString()
+                }
+            };
+            console.log(txParams);
+            const tx = await enclaveApiClient.signTransactionFinalize(txParams);
+
+            const response = { id, result: tx, jsonrpc: '2.0' }
+            console.log(response)
+            await web3wallet.value!.respondSessionRequest({ topic, response })
+        } catch (error) {
+            displayNotificationFromError(error);
+            await rejectSessionRequest(id, topic, "An unknown error occured");
+        }
     }
 
     const onSessionRequest = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
@@ -98,13 +174,13 @@ export default function () {
         switch (request.method) {
             case 'eth_sign':
             case 'personal_sign':
-                onSignMessage(requestEvent);
+                await onSignMessage(requestEvent);
                 break;
             case 'eth_sendTransaction':
-                await rejectSessionRequest(id, topic);
+                await onSendTransaction(requestEvent);
                 break;
             case 'eth_signTransaction':
-                await rejectSessionRequest(id, topic);
+                await onSignTransaction(requestEvent);
                 break;
             default:
                 await rejectSessionRequest(id, topic);
@@ -133,6 +209,15 @@ export default function () {
             id: id,
             namespaces: approvedNamespaces
         })
+    }
+
+    function convertHexToUtf8(value: string) {
+        console.log(value)
+        if (isHexString(value)) {
+            return toUtf8String(value)
+        }
+
+        return value
     }
 
     return {

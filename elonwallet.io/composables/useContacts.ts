@@ -6,14 +6,14 @@ export default function () {
     const backendApiClient = useBackend();
     const { displayNotificationFromError } = useNotification();
 
-    const { data: contacts, error, refresh } = useAsyncDataWithCache<User[]>("contacts", async () => {
+    const { data: contacts, error: contactsError, refresh } = useAsyncDataWithCache<User[]>("contacts", async () => {
         return await backendApiClient.getContacts(backendJWT.value);
     });
 
-    watch(error, () => {
-        if (error.value) {
-            displayNotificationFromError(error);
-            if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
+    watch(contactsError, () => {
+        if (contactsError.value) {
+            displayNotificationFromError(contactsError.value);
+            if (contactsError.value instanceof HttpError && contactsError.value.type === HttpErrorType.Unauthorized) {
                 navigateTo("/login")
             }
         }

@@ -35,18 +35,6 @@ export interface PublicWallet {
     address: string
 }
 
-export interface TransactionInfo {
-    chain: string,
-    from: string,
-    to: string,
-    amount: string,
-}
-
-export interface TransactionFinalizePayload {
-    assertion_response: UrlEncodedPublicKeyCredential,
-    transaction_info: TransactionInfo
-}
-
 export interface CreateCredentialFinalizePayload {
     creation_response: UrlEncodedPublicKeyCredential,
     name: string
@@ -101,4 +89,30 @@ export interface OTP {
     valid_until: number,
     times_tried: number,
     active: boolean
+}
+
+export interface WalletConnectTransactionParams {
+    from: string,
+    to: string,
+    data: string,
+    gasLimit?: string,
+    gasPrice?: string,
+    value?: string,
+    nonce?: string
+}
+
+export interface TransactionParams {
+    chain: string,
+    from: string,
+    to: string,
+    data?: string,
+    gas?: string,
+    gas_price?: string,
+    value?: string,
+    nonce?: string
+}
+
+export interface TransactionFinalizePayload {
+    assertion_response: UrlEncodedPublicKeyCredential,
+    transaction_params: TransactionParams
 }

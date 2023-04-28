@@ -111,15 +111,15 @@ const onSend = async () => {
 const sendTransaction = async () => {
     const enclaveApiClient = useEnclave();
 
-    const options = await enclaveApiClient.transactionInitialize();
+    const options = await enclaveApiClient.sendTransactionInitialize();
     const credential = await solveLoginChallenge(options);
-    await enclaveApiClient.transactionFinalize({
+    await enclaveApiClient.sendTransactionFinalize({
         assertion_response: credential,
-        transaction_info: {
-            amount: parseUnits(amount.value!.toString(), network.value.decimals).toString(),
+        transaction_params: {
             chain: network.value!.chain,
             from: wallet.value!.address,
-            to: receiverAddress.value
+            to: receiverAddress.value,
+            value: parseUnits(amount.value!.toString(), network.value.decimals).toString(),
         }
     });
 }
