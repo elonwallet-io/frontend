@@ -26,7 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import { toWei, fromWei } from '~/lib/UnitConverter';
+import { parseUnits } from 'ethers';
+import { formatCurrency } from '~/lib/UnitConverter';
 import { isRequired, isValidNumber, isGreaterThan } from '~/lib/VuetifyValidationRules';
 import { UINotificationType } from '~/lib/types';
 import { solveLoginChallenge } from '~/lib/webauthn';
@@ -58,8 +59,11 @@ const amountRules = [
     isValidNumber("Amount"),
     isGreaterThan("Amount", 0),
     (value: number) => {
-        const maxAmount = parseFloat(fromWei(balance.value!, network.value!.decimals)) - parseFloat(fromWei(fees.value!.estimated_fees, network.value!.decimals))
-        if (value < maxAmount) return true
+        const balanceFormatted = formatCurrency(balance.value!, network.value.decimals);
+        const estimatedFeesFormatted = formatCurrency(fees.value!.estimated_fees, network.value.decimals);
+        const maxAmount = parseFloat(balanceFormatted) - parseFloat(estimatedFeesFormatted)
+        if (value < maxAmount)
+            return true
 
         return 'Amount must be smaller than balance plus fees'
     }
@@ -112,7 +116,7 @@ const sendTransaction = async () => {
     await enclaveApiClient.transactionFinalize({
         assertion_response: credential,
         transaction_info: {
-            amount: toWei(amount.value!.toString()),
+            amount: parseUnits(amount.value!.toString(), network.value.decimals).toString(),
             chain: network.value!.chain,
             from: wallet.value!.address,
             to: receiverAddress.value

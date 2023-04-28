@@ -15,6 +15,7 @@
     "@walletconnect/types": "^2.7.1",
     "@walletconnect/web3wallet": "^1.6.0",
     "autoprefixer": "^10.4.14",
+    "ethers": "^6.3.0",
     "postcss": "^8.4.23",
     "sass": "^1.62.1",
     "tailwindcss": "^3.3.2",

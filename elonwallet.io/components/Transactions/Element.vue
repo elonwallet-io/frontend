@@ -36,8 +36,7 @@
                     </tr>
                     <tr>
                         <td>Gas Price</td>
-                        <td>{{ `${(parseFloat(fromWei(props.transaction.gas_price, props.currentNetwork.decimals /
-                            2))).toFixed(8)} Gwei` }}</td>
+                        <td>{{ gasPrice }}</td>
                     </tr>
                 </tbody>
             </v-table>
@@ -49,7 +48,7 @@
 
 <script setup lang="ts">
 import { Network, Transaction, User, Wallet } from '~/lib/types';
-import { fromWei } from '~~/lib/UnitConverter';
+import { formatCurrency } from '~~/lib/UnitConverter';
 
 const props = defineProps<{
     contacts: User[],
@@ -79,8 +78,12 @@ const sender = computed(() => {
 });
 
 const amount = computed(() => {
-    return parseFloat(fromWei(props.transaction.value, props.currentNetwork.decimals)).toFixed(8)
+    return formatCurrency(props.transaction.value, props.currentNetwork.decimals, 8);
 });
+
+const gasPrice = computed(() => {
+    return `${formatCurrency(props.transaction.gas_price, props.currentNetwork.decimals / 2, 8)} Gwei`
+})
 
 const onClickTransaction = () => {
     showExtended.value = !showExtended.value;
@@ -98,11 +101,11 @@ const blockExplorer = computed(() => {
 });
 
 const txFee = computed(() => {
-    const gasPrice = parseFloat(fromWei(props.transaction.gas_price, props.currentNetwork.decimals)) * parseInt(props.transaction.gas);
-    const extra = parseFloat(fromWei(props.transaction.receipt_cumulative_gas_used, props.currentNetwork.decimals)) * parseInt(props.transaction.receipt_gas_used);
-    const total = gasPrice + extra;
+    const gasPrice = parseFloat(formatCurrency(props.transaction.gas_price, props.currentNetwork.decimals)) * parseInt(props.transaction.gas);
+    const extra = parseFloat(formatCurrency(props.transaction.receipt_cumulative_gas_used, props.currentNetwork.decimals)) * parseInt(props.transaction.receipt_gas_used);
+    const total = gasPrice + extra
 
-    return `${total.toFixed(8)} ${props.currentNetwork.currency} `;
+    return `${total.toFixed(8)} ${props.currentNetwork.currency}`;
 })
 
 </script>

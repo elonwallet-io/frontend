@@ -1,25 +1,12 @@
-export function toWei(amount: string, decimals: number = 18): string {
-    let result = Array<string>();
-    let decimalPlaces = 0;
-    let shouldCount = false;
-    for (let c of amount) {
-        if (c === '.') {
-            shouldCount = true;
-            continue;
-        }
-        if (shouldCount) {
-            decimalPlaces++;
-        }
-        result.push(c);
+import { formatUnits } from "ethers";
+
+export function formatCurrency(amount: string, decimals: number, fractionDigits: number = -1): string {
+    let value = BigInt(amount);
+
+    if (fractionDigits > -1) {
+        const remainder = value % BigInt("1".padEnd(fractionDigits, "0"))
+        value -= remainder
     }
 
-    return result.join('').replace(/^0+/, '').concat('0'.repeat(decimals - decimalPlaces));
-}
-
-export function fromWei(amount: string, decimals: number = 18): string {
-    let resultString = amount.padStart(decimals + 1, '0');
-    const insertIndex = resultString.length - decimals;
-    resultString = resultString.substring(0, insertIndex) + '.' + resultString.substring(insertIndex, resultString.length);
-
-    return resultString.replace(/0+$/, '').replace(/\.$/, '');;
+    return formatUnits(value, decimals);
 }
