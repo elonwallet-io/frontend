@@ -1,3 +1,4 @@
+import { TypedDataDomain, TypedDataField } from "ethers"
 import { UrlEncodedPublicKeyCredential } from "./webauthn"
 
 export interface WebauthnCredential {
@@ -115,4 +116,11 @@ export interface TransactionParams {
 export interface TransactionFinalizePayload {
     assertion_response: UrlEncodedPublicKeyCredential,
     transaction_params: TransactionParams
+}
+
+export interface SignTypedData {
+    types: Record<string, Array<TypedDataField>>,
+    primaryType: string,
+    domain: TypedDataDomain,
+    message: Record<string, any>
 }

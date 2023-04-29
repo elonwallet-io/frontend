@@ -1,5 +1,5 @@
 import { HttpError } from "./HttpError";
-import { CreateCredentialFinalizePayload, Fees, Network, OTP, TransactionFinalizePayload, Wallet, WebauthnCredential } from "./types";
+import { CreateCredentialFinalizePayload, Fees, Network, OTP, SignTypedData, TransactionFinalizePayload, Wallet, WebauthnCredential } from "./types";
 import { UrlEncodedPublicKeyCredential, UrlEncodedPublicKeyCredentialCreationOptions, UrlEncodedPublicKeyCredentialRequestOptions } from "./webauthn";
 
 export class EnclaveApiClient {
@@ -281,7 +281,7 @@ export class EnclaveApiClient {
         }
     }
 
-    async createPersonalSignature(message: string, from: string): Promise<string> {
+    async signPersonal(message: string, from: string): Promise<string> {
         const resp = await fetch(`${this.baseURL}/message/sign`, {
             method: "POST",
             headers: {
@@ -290,6 +290,26 @@ export class EnclaveApiClient {
             },
             credentials: 'include',
             body: JSON.stringify({ message: message, from: from })
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson.signature;
+    }
+
+    async signTypedData(typedData: SignTypedData, from: string): Promise<string> {
+        const resp = await fetch(`${this.baseURL}/typed-data/sign`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ typed_data: typedData, from: from })
         });
 
         if (resp.status !== 200) {

@@ -5,7 +5,7 @@ import { SignClientTypes, SessionTypes } from '@walletconnect/types'
 import { HttpError, HttpErrorType } from '~/lib/HttpError';
 import { solveLoginChallenge } from '~/lib/webauthn';
 import { isHexString, toUtf8String } from 'ethers';
-import { WalletConnectTransactionParams } from '~/lib/types';
+import { SignTypedData, WalletConnectTransactionParams } from '~/lib/types';
 
 export default function () {
     const web3wallet = ref<Client>();
@@ -63,7 +63,7 @@ export default function () {
 
     const signMessage = async (message: string, from: string): Promise<string> => {
         try {
-            const signature = await enclaveApiClient.createPersonalSignature(message, from);
+            const signature = await enclaveApiClient.signPersonal(message, from);
             return signature;
         } catch (error) {
             displayNotificationFromError(error);
@@ -165,6 +165,23 @@ export default function () {
         }
     }
 
+    const onSignTypedData = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
+        const { topic, params, id } = requestEvent
+        const enclaveApiClient = useEnclave();
+        const from: string = params.request.params[0];
+        const typedData: SignTypedData = JSON.parse(params.request.params[1]);
+
+        try {
+            const signature = await enclaveApiClient.signTypedData(typedData, from);
+            const response = { id, result: signature, jsonrpc: '2.0' }
+            console.log(response)
+            await web3wallet.value!.respondSessionRequest({ topic, response })
+        } catch (error) {
+            displayNotificationFromError(error);
+            await rejectSessionRequest(id, topic, "An unknown error occured");
+        }
+    }
+
     const onSessionRequest = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
         console.log('session_request', requestEvent)
         const { topic, params, id } = requestEvent
@@ -184,8 +201,11 @@ export default function () {
             case 'eth_signTransaction':
                 await onSignTransaction(requestEvent);
                 break;
+            case 'eth_signTypedData':
+                await onSignTypedData(requestEvent);
+                break;
             default:
-                await rejectSessionRequest(id, topic);
+                await rejectSessionRequest(id, topic, "Method not supported");
         }
     }
 
