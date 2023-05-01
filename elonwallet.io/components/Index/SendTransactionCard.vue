@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { parseUnits } from 'ethers';
+import { isAddress, parseUnits } from 'ethers';
 import { formatCurrency } from '~/lib/UnitConverter';
 import { isRequired, isValidNumber, isGreaterThan } from '~/lib/VuetifyValidationRules';
 import { UINotificationType } from '~/lib/types';
@@ -45,7 +45,7 @@ const addressOrContactEmail = ref('');
 const addressOrContactEmailRules = [
     (value: string) => {
         const isContactEmail = contacts.value!.find(item => item.email === value);
-        const isWalletAddress = /^0x[0-9a-fA-F]{40}$/.test(value);
+        const isWalletAddress = /^0x[0-9a-fA-F]{40}$/.test(value) && isAddress(value);
         if (isContactEmail || isWalletAddress)
             return true
 

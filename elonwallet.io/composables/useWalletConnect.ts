@@ -4,7 +4,6 @@ import Client, { Web3Wallet } from '@walletconnect/web3wallet'
 import { SignClientTypes, SessionTypes } from '@walletconnect/types'
 import { HttpError, HttpErrorType } from '~/lib/HttpError';
 import { solveLoginChallenge } from '~/lib/webauthn';
-import { isHexString, toUtf8String } from 'ethers';
 import { SignTypedData, WalletConnectTransactionParams } from '~/lib/types';
 
 export default function () {
@@ -13,7 +12,8 @@ export default function () {
     const session = ref<SessionTypes.Struct>();
     const enclaveApiClient = useEnclave();
     const { displayNotificationFromError } = useNotification();
-    const currentWallet = useCurrentWallet();
+    const { networks } = useNetworks();
+    const { wallets } = useWallets();
 
     onMounted(async () => {
         const core = new Core({
@@ -30,7 +30,6 @@ export default function () {
                 icons: []
             }
         })
-
 
         web3wallet.value!.on('session_proposal', onSessionProposal)
         web3wallet.value!.on('session_request', onSessionRequest)
@@ -86,7 +85,6 @@ export default function () {
 
 
         const response = { id, result: signature, jsonrpc: '2.0' }
-        console.log(response)
         await web3wallet.value!.respondSessionRequest({ topic, response })
     }
 
@@ -99,14 +97,10 @@ export default function () {
             const options = await enclaveApiClient.sendTransactionInitialize();
             const credential = await solveLoginChallenge(options);
 
-            if (signParams.data !== "0x") {
-                await rejectSessionRequest(id, topic, "ERC20 is currently not supported");
-            }
-
             const tx = await enclaveApiClient.sendTransactionFinalize({
                 assertion_response: credential,
                 transaction_params: {
-                    chain: "0x5",
+                    chain: convertToHexChainId(params.chainId),
                     from: signParams.from,
                     to: signParams.to,
                     data: signParams.data,
@@ -131,11 +125,7 @@ export default function () {
         const enclaveApiClient = useEnclave();
         const signParams: WalletConnectTransactionParams = params.request.params[0];
 
-        if (signParams.data !== "0x") {
-            await rejectSessionRequest(id, topic, "ERC20 is currently not supported");
-        }
-
-        //TODO fix 'invalid remainder' bug
+        //TODO investigate 'invalid remainder' bug
 
         try {
             const options = await enclaveApiClient.signTransactionInitialize();
@@ -143,7 +133,7 @@ export default function () {
             const txParams = {
                 assertion_response: credential,
                 transaction_params: {
-                    chain: "0x5",
+                    chain: convertToHexChainId(params.chainId),
                     from: signParams.from,
                     to: signParams.to,
                     data: signParams.data,
@@ -174,7 +164,6 @@ export default function () {
         try {
             const signature = await enclaveApiClient.signTypedData(typedData, from);
             const response = { id, result: signature, jsonrpc: '2.0' }
-            console.log(response)
             await web3wallet.value!.respondSessionRequest({ topic, response })
         } catch (error) {
             displayNotificationFromError(error);
@@ -186,7 +175,7 @@ export default function () {
         console.log('session_request', requestEvent)
         const { topic, params, id } = requestEvent
         const { request } = params
-        const requestSession = web3wallet.value!.getActiveSessions()[topic]
+        //const requestSession = web3wallet.value!.getActiveSessions()[topic]
 
         console.log(params)
 
@@ -218,10 +207,10 @@ export default function () {
             proposal: params,
             supportedNamespaces: {
                 eip155: {
-                    chains: ["eip155:1", "eip155:5"],
+                    chains: CAIP2FormattedNetworks.value,
                     methods: ["personal_sign", "eth_sendTransaction", "eth_signTransaction", "eth_signTypedData", "eth_sign"],
                     events: ["accountsChanged", "chainChanged"],
-                    accounts: [`eip155:1:${currentWallet.value.address}`, `eip155:5:${currentWallet.value.address}`]
+                    accounts: CAIP10FormmatedWallets.value
                 },
             },
         });
@@ -233,14 +222,25 @@ export default function () {
         })
     }
 
-    function convertHexToUtf8(value: string) {
-        console.log(value)
-        if (isHexString(value)) {
-            return toUtf8String(value)
-        }
-
-        return value
+    function convertToHexChainId(value: string): string {
+        const chain = parseInt(value.replace("eip155:", ""), 10);
+        return `0x${chain.toString(16)}`
     }
+
+    const CAIP2FormattedNetworks = computed(() => networks.value!.map(n => {
+        return `eip155:${parseInt(n.chain, 16)}`
+    }))
+
+    const CAIP10FormmatedWallets = computed(() => {
+        const accounts = new Array<string>();
+        for (const wallet of wallets.value!) {
+            for (const network of CAIP2FormattedNetworks.value) {
+                accounts.push(`${network}:${wallet.address}`);
+            }
+        }
+        return accounts;
+    })
+
 
     return {
         connect
