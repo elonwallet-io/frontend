@@ -56,7 +56,6 @@ export default function () {
             }
         }
 
-
         await web3wallet.value!.respondSessionRequest({ topic, response })
     }
 
