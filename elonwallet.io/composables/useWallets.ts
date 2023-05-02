@@ -5,14 +5,14 @@ export default function () {
     const enclaveApiClient = useEnclave();
     const { displayNotificationFromError } = useNotification();
 
-    const { data: wallets, error: walletsError, refresh } = useAsyncDataWithCache<Wallet[]>("wallets", async () => {
+    const { data: wallets, error, refresh } = useAsyncDataWithCache<Wallet[]>("wallets", async () => {
         return await enclaveApiClient.getWallets();
     });
 
-    watch(walletsError, () => {
-        if (walletsError.value) {
-            displayNotificationFromError(walletsError.value);
-            if (walletsError.value instanceof HttpError && walletsError.value.type === HttpErrorType.Unauthorized) {
+    watchEffect(() => {
+        if (error.value) {
+            displayNotificationFromError(error.value);
+            if (error.value instanceof HttpError && error.value.type === HttpErrorType.Unauthorized) {
                 navigateTo("/login")
             }
         }

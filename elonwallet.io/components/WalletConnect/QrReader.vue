@@ -19,7 +19,6 @@ const emit = defineEmits(['onQrCodeScanned'])
 const show = ref(false);
 
 const onDecode = (result: string) => {
-    console.log(result)
     show.value = false;
     emit('onQrCodeScanned', result);
 }

@@ -5,14 +5,14 @@ export default function () {
     const enclaveApiClient = useEnclave();
     const { displayNotificationFromError } = useNotification();
 
-    const { data: networks, error: networksError, refresh } = useAsyncDataWithCache<Network[]>("networks", async () => {
+    const { data: networks, error, refresh } = useAsyncDataWithCache<Network[]>("networks", async () => {
         return await enclaveApiClient.getNetworks();
     });
 
-    watch(networksError, () => {
-        if (networksError.value) {
-            displayNotificationFromError(networksError.value);
-            if (networksError.value instanceof HttpError && networksError.value.type === HttpErrorType.Unauthorized) {
+    watchEffect(() => {
+        if (error.value) {
+            displayNotificationFromError(error.value);
+            if (error.value instanceof HttpError && error.value.type === HttpErrorType.Unauthorized) {
                 navigateTo("/login")
             }
         }

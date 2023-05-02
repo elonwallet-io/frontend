@@ -31,9 +31,9 @@ export default function () {
             }
         })
 
-        web3wallet.value!.on('session_proposal', onSessionProposal)
-        web3wallet.value!.on('session_request', onSessionRequest)
-        web3wallet.value!.on('session_delete', data => console.log('delete', data))
+        web3wallet.value.on('session_proposal', onSessionProposal)
+        web3wallet.value.on('session_request', onSessionRequest)
+        web3wallet.value.on('session_delete', data => console.log('delete', data))
     })
 
     onUnmounted(async () => {
@@ -142,7 +142,6 @@ export default function () {
                     value: BigInt(signParams.value ?? "").toString()
                 }
             };
-            console.log(txParams);
             const tx = await enclaveApiClient.signTransactionFinalize(txParams);
 
             const response = { id, result: tx, jsonrpc: '2.0' }
@@ -226,13 +225,14 @@ export default function () {
         return `0x${chain.toString(16)}`
     }
 
-    const CAIP2FormattedNetworks = computed(() => networks.value!.map(n => {
-        return `eip155:${parseInt(n.chain, 16)}`
-    }))
+    const CAIP2FormattedNetworks = computed(() => {
+        return networks.value?.map(n => `eip155:${parseInt(n.chain, 16)}`) ?? []
+    })
 
     const CAIP10FormmatedWallets = computed(() => {
         const accounts = new Array<string>();
-        for (const wallet of wallets.value!) {
+
+        for (const wallet of wallets.value ?? []) {
             for (const network of CAIP2FormattedNetworks.value) {
                 accounts.push(`${network}:${wallet.address}`);
             }

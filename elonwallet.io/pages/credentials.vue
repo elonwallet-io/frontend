@@ -29,28 +29,7 @@ import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { WebauthnCredential } from '~~/lib/types';
 const { displayNotificationFromError } = useNotification();
 const enclaveApiClient = useEnclave();
-
-const { data: credentials, error: credentialsError, refresh } = useAsyncDataWithCache<WebauthnCredential[]>('credentials', async () => {
-    return await enclaveApiClient.getCredentials();
-})
-
-onMounted(async () => {
-    await refresh();
-})
-
-watch(credentialsError, () => {
-    if (credentialsError.value) {
-        console.log(credentialsError.value)
-        console.log(credentialsError.value instanceof HttpError)
-        displayNotificationFromError(credentialsError.value);
-        if (credentialsError.value instanceof HttpError) {
-            if (credentialsError.value.type === HttpErrorType.Unauthorized)
-                navigateTo("/login")
-            else if (credentialsError.value.type === HttpErrorType.Forbidden)
-                navigateTo("/reauthenticate?redirect=%2Fcredentials")
-        }
-    }
-})
+const { credentials, refresh } = useCredentials();
 
 const onClickDelete = async (credential: WebauthnCredential) => {
     try {
