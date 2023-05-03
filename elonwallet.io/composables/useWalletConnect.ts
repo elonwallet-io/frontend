@@ -2,18 +2,18 @@ import { Core } from '@walletconnect/core'
 import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
 import Client, { Web3Wallet } from '@walletconnect/web3wallet'
 import { SignClientTypes, SessionTypes } from '@walletconnect/types'
-import { HttpError, HttpErrorType } from '~/lib/HttpError';
-import { solveLoginChallenge } from '~/lib/webauthn';
-import { SignTypedData, WalletConnectTransactionParams } from '~/lib/types';
+import { WcViews, WcViewEvent } from '~/lib/types';
+import { JsonRpcResponse } from "@walletconnect/jsonrpc-utils";
 
 export default function () {
     const web3wallet = ref<Client>();
     const config = useRuntimeConfig();
     const session = ref<SessionTypes.Struct>();
-    const enclaveApiClient = useEnclave();
-    const { displayNotificationFromError } = useNotification();
     const { networks } = useNetworks();
     const { wallets } = useWallets();
+    const viewEvents = ref<WcViewEvent>({
+        view: WcViews.Connect,
+    })
 
     onMounted(async () => {
         const core = new Core({
@@ -46,153 +46,48 @@ export default function () {
         await web3wallet.value!.pair({ uri })
     }
 
-    const rejectSessionRequest = async (id: number, topic: string, message: string) => {
-        const response = {
-            id,
-            jsonrpc: '2.0',
-            error: {
-                code: 5000,
-                message: message
-            }
-        }
-
-        await web3wallet.value!.respondSessionRequest({ topic, response })
-    }
-
-    const signMessage = async (message: string, from: string): Promise<string> => {
-        try {
-            const signature = await enclaveApiClient.signPersonal(message, from);
-            return signature;
-        } catch (error) {
-            displayNotificationFromError(error);
-            if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
-                navigateTo("/login")
-            }
-            return "";
-        }
-    }
-
-    const onSignMessage = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
-        const { topic, params, id } = requestEvent
-        const { request } = params
-        let signature = "";
-
-        if (request.method === "eth_sign")
-            signature = await signMessage(request.params[1], request.params[0]);
-        else
-            signature = await signMessage(request.params[0], request.params[1]);
-
-
-        const response = { id, result: signature, jsonrpc: '2.0' }
-        await web3wallet.value!.respondSessionRequest({ topic, response })
-    }
-
-    const onSendTransaction = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
-        const { topic, params, id } = requestEvent
-        const enclaveApiClient = useEnclave();
-        const signParams: WalletConnectTransactionParams = params.request.params[0];
-
-        try {
-            const options = await enclaveApiClient.sendTransactionInitialize();
-            const credential = await solveLoginChallenge(options);
-
-            const tx = await enclaveApiClient.sendTransactionFinalize({
-                assertion_response: credential,
-                transaction_params: {
-                    chain: convertToHexChainId(params.chainId),
-                    from: signParams.from,
-                    to: signParams.to,
-                    data: signParams.data,
-                    gas: BigInt(signParams.gasLimit ?? "").toString(),
-                    gas_price: BigInt(signParams.gasPrice ?? "").toString(),
-                    nonce: BigInt(signParams.nonce ?? "").toString(),
-                    value: BigInt(signParams.value ?? "").toString()
-                }
-            });
-
-            const response = { id, result: tx, jsonrpc: '2.0' }
-            console.log(response)
-            await web3wallet.value!.respondSessionRequest({ topic, response })
-        } catch (error) {
-            displayNotificationFromError(error);
-            await rejectSessionRequest(id, topic, "An unknown error occured");
-        }
-    }
-
-    const onSignTransaction = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
-        const { topic, params, id } = requestEvent
-        const enclaveApiClient = useEnclave();
-        const signParams: WalletConnectTransactionParams = params.request.params[0];
-
-        //TODO investigate 'invalid remainder' bug
-
-        try {
-            const options = await enclaveApiClient.signTransactionInitialize();
-            const credential = await solveLoginChallenge(options);
-            const txParams = {
-                assertion_response: credential,
-                transaction_params: {
-                    chain: convertToHexChainId(params.chainId),
-                    from: signParams.from,
-                    to: signParams.to,
-                    data: signParams.data,
-                    gas: BigInt(signParams.gasLimit ?? "").toString(),
-                    gas_price: BigInt(signParams.gasPrice ?? "").toString(),
-                    nonce: BigInt(signParams.nonce ?? "").toString(),
-                    value: BigInt(signParams.value ?? "").toString()
-                }
-            };
-            const tx = await enclaveApiClient.signTransactionFinalize(txParams);
-
-            const response = { id, result: tx, jsonrpc: '2.0' }
-            console.log(response)
-            await web3wallet.value!.respondSessionRequest({ topic, response })
-        } catch (error) {
-            displayNotificationFromError(error);
-            await rejectSessionRequest(id, topic, "An unknown error occured");
-        }
-    }
-
-    const onSignTypedData = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
-        const { topic, params, id } = requestEvent
-        const enclaveApiClient = useEnclave();
-        const from: string = params.request.params[0];
-        const typedData: SignTypedData = JSON.parse(params.request.params[1]);
-
-        try {
-            const signature = await enclaveApiClient.signTypedData(typedData, from);
-            const response = { id, result: signature, jsonrpc: '2.0' }
-            await web3wallet.value!.respondSessionRequest({ topic, response })
-        } catch (error) {
-            displayNotificationFromError(error);
-            await rejectSessionRequest(id, topic, "An unknown error occured");
-        }
-    }
-
     const onSessionRequest = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
         console.log('session_request', requestEvent)
         const { topic, params, id } = requestEvent
         const { request } = params
-        //const requestSession = web3wallet.value!.getActiveSessions()[topic]
+        const requestSession = web3wallet.value!.getActiveSessions()[topic]
 
         console.log(params)
 
         switch (request.method) {
             case 'eth_sign':
             case 'personal_sign':
-                await onSignMessage(requestEvent);
+                viewEvents.value = {
+                    view: WcViews.SignMessage,
+                    data: { requestEvent, requestSession }
+                }
                 break;
             case 'eth_sendTransaction':
-                await onSendTransaction(requestEvent);
+                viewEvents.value = {
+                    view: WcViews.SendTransaction,
+                    data: { requestEvent, requestSession }
+                }
                 break;
             case 'eth_signTransaction':
-                await onSignTransaction(requestEvent);
+                viewEvents.value = {
+                    view: WcViews.SignTransaction,
+                    data: { requestEvent, requestSession }
+                }
                 break;
             case 'eth_signTypedData':
-                await onSignTypedData(requestEvent);
+                viewEvents.value = {
+                    view: WcViews.SignTypedData,
+                    data: { requestEvent, requestSession }
+                }
                 break;
             default:
-                await rejectSessionRequest(id, topic, "Method not supported");
+                const response = {
+                    id,
+                    jsonrpc: '2.0',
+                    error: getSdkError('UNSUPPORTED_METHODS')
+                }
+
+                await web3wallet.value!.respondSessionRequest({ topic, response })
         }
     }
 
@@ -220,11 +115,6 @@ export default function () {
         })
     }
 
-    function convertToHexChainId(value: string): string {
-        const chain = parseInt(value.replace("eip155:", ""), 10);
-        return `0x${chain.toString(16)}`
-    }
-
     const CAIP2FormattedNetworks = computed(() => {
         return networks.value?.map(n => `eip155:${parseInt(n.chain, 16)}`) ?? []
     })
@@ -240,8 +130,16 @@ export default function () {
         return accounts;
     })
 
+    const onRespondSessionRequest = async (response: JsonRpcResponse, requestEvent: SignClientTypes.EventArguments['session_request']) => {
+        console.log(response, requestEvent)
+        viewEvents.value = { view: WcViews.Connect }
+        web3wallet.value!.respondSessionRequest({ topic: requestEvent.topic, response: response })
+    }
+
 
     return {
-        connect
+        connect,
+        viewEvents,
+        onRespondSessionRequest
     }
 }

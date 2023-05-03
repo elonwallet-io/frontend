@@ -39,7 +39,7 @@ const { balance } = useBalance();
 const { fees } = useFees();
 const { displayNotificationFromError, displayNotification } = useNotification();
 const transactionForm = ref();
-const emit = defineEmits(['on-close'])
+const emit = defineEmits(['on-response'])
 
 const addressOrContactEmail = ref('');
 const addressOrContactEmailRules = [
@@ -90,7 +90,7 @@ const receiverAddress = computed(() => {
 
 const onDiscard = async () => {
     transactionForm.value.reset();
-    emit('on-close');
+    emit('on-response');
 }
 
 const onSend = async () => {
@@ -102,7 +102,7 @@ const onSend = async () => {
         await sendTransaction()
         displayNotification("Transaction sent", "Successfully sent the transaction. Your balance and recent transactions will update soon.", UINotificationType.Success)
         transactionForm.value.reset();
-        emit('on-close');
+        emit('on-response');
     } catch (error) {
         displayNotificationFromError(error);
     }

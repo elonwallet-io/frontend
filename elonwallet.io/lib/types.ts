@@ -1,5 +1,6 @@
 import { TypedDataDomain, TypedDataField } from "ethers"
 import { UrlEncodedPublicKeyCredential } from "./webauthn"
+import { SignClientTypes, SessionTypes } from "@walletconnect/types"
 
 export interface WebauthnCredential {
     name: string,
@@ -123,4 +124,22 @@ export interface SignTypedData {
     primaryType: string,
     domain: TypedDataDomain,
     message: Record<string, any>
+}
+
+export interface WcViewEvent {
+    view: WcViews,
+    data?: WcData
+}
+
+export interface WcData {
+    requestEvent: SignClientTypes.EventArguments['session_request'],
+    requestSession: SessionTypes.Struct
+}
+
+export enum WcViews {
+    Connect,
+    SignMessage,
+    SignTypedData,
+    SendTransaction,
+    SignTransaction
 }

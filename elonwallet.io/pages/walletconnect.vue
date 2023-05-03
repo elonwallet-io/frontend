@@ -10,11 +10,23 @@
             <v-text-field variant="solo" v-model="uri" :rules="uriRules" label="WalletConnect URI" />
             <v-btn type="submit" variant="elevated" color="primary" block @click="onConnect">Connect</v-btn>
         </v-form>
+        <DialogSignMessage v-if="viewEvents.view === WcViews.SignMessage" :request-event="viewEvents.data!.requestEvent"
+            :request-session="viewEvents.data!.requestSession" @response="onRespondSessionRequest" />
+        <DialogSignTypedData v-else-if="viewEvents.view === WcViews.SignTypedData"
+            :request-event="viewEvents.data!.requestEvent" :request-session="viewEvents.data!.requestSession"
+            @response="onRespondSessionRequest" />
+        <DialogSendTransaction v-else-if="viewEvents.view === WcViews.SendTransaction"
+            :request-event="viewEvents.data!.requestEvent" :request-session="viewEvents.data!.requestSession"
+            @response="onRespondSessionRequest" />
+        <DialogSignTransaction v-else-if="viewEvents.view === WcViews.SignTransaction"
+            :request-event="viewEvents.data!.requestEvent" :request-session="viewEvents.data!.requestSession"
+            @response="onRespondSessionRequest" />
     </div>
 </template>
 
 <script setup lang="ts">
 import { isRequired } from '~/lib/VuetifyValidationRules';
+import { WcViews } from '~/lib/types';
 
 const form = ref();
 const uri = ref("");
@@ -22,7 +34,7 @@ const uriRules = [
     isRequired("WalletConnect URI"),
 ];
 
-const { connect } = useWalletConnect();
+const { connect, viewEvents, onRespondSessionRequest } = useWalletConnect();
 
 const onConnect = async () => {
     const { valid } = await form.value.validate();
@@ -30,5 +42,4 @@ const onConnect = async () => {
         return;
     connect(uri.value);
 }
-
 </script>

@@ -20,6 +20,6 @@
     "sass": "^1.62.1",
     "tailwindcss": "^3.3.2",
     "vue3-qrcode-reader": "^0.0.1",
-    "vuetify": "^3.2.1"
+    "vuetify": "^3.2.2"
   }
 }

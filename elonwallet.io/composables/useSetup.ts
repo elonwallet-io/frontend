@@ -15,21 +15,25 @@ export default function () {
         enclaveURL.value = localStorage.getItem('enclave_url')!;
     })
 
-    watch(preSetupFinished, () => {
+    const unwatchPreSetup = watch(preSetupFinished, () => {
         const { wallets } = useWallets();
         const { networks } = useNetworks();
 
-        watch(networks, () => {
+        const unwatchNetworks = watch(networks, () => {
             if (networks.value) {
                 network.value = networks.value[0]!;
+                unwatchNetworks();
             }
         });
 
-        watch(wallets, () => {
+        const unwatchWallets = watch(wallets, () => {
             if (wallets.value) {
                 wallet.value = wallets.value[0]!;
+                unwatchWallets();
             }
         });
+
+        unwatchPreSetup();
     })
 
 
