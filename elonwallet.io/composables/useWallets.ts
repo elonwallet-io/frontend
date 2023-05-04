@@ -9,10 +9,10 @@ export default function () {
         return await enclaveApiClient.getWallets();
     });
 
-    watch(error, () => {
+    watchEffect(() => {
         if (error.value) {
-            displayNotificationFromError(error);
-            if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
+            displayNotificationFromError(error.value);
+            if (error.value instanceof HttpError && error.value.type === HttpErrorType.Unauthorized) {
                 navigateTo("/login")
             }
         }

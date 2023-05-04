@@ -1,5 +1,5 @@
 import { HttpError } from "./HttpError";
-import { CreateCredentialFinalizePayload, Fees, Network, OTP, TransactionFinalizePayload, Wallet, WebauthnCredential } from "./types";
+import { CreateCredentialFinalizePayload, Fees, Network, OTP, SignTypedData, TransactionFinalizePayload, Wallet, WebauthnCredential } from "./types";
 import { UrlEncodedPublicKeyCredential, UrlEncodedPublicKeyCredentialCreationOptions, UrlEncodedPublicKeyCredentialRequestOptions } from "./webauthn";
 
 export class EnclaveApiClient {
@@ -118,42 +118,6 @@ export class EnclaveApiClient {
 
         const respJson = await resp.json();
         return respJson.wallets;
-    }
-
-    async transactionInitialize(): Promise<UrlEncodedPublicKeyCredentialRequestOptions> {
-        const resp = await fetch(`${this.baseURL}/transaction/initialize`, {
-            method: "GET",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-        });
-
-        if (resp.status !== 200) {
-            const error = await HttpError.fromResponse(resp);
-            throw error;
-        }
-
-        const respJson = await resp.json();
-        return respJson.publicKey;
-    }
-
-    async transactionFinalize(payload: TransactionFinalizePayload): Promise<void> {
-        const resp = await fetch(`${this.baseURL}/transaction/finalize`, {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify(payload)
-        });
-
-        if (resp.status !== 200) {
-            const error = await HttpError.fromResponse(resp);
-            throw error;
-        }
     }
 
     async createCredentialInitialize(): Promise<UrlEncodedPublicKeyCredentialCreationOptions> {
@@ -315,5 +279,124 @@ export class EnclaveApiClient {
             const error = await HttpError.fromResponse(resp);
             throw error;
         }
+    }
+
+    async signPersonal(message: string, from: string): Promise<string> {
+        const resp = await fetch(`${this.baseURL}/message/sign`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ message: message, from: from })
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson.signature;
+    }
+
+    async signTypedData(typedData: SignTypedData, from: string): Promise<string> {
+        const resp = await fetch(`${this.baseURL}/typed-data/sign`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ typed_data: typedData, from: from })
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson.signature;
+    }
+
+    async sendTransactionInitialize(): Promise<UrlEncodedPublicKeyCredentialRequestOptions> {
+        const resp = await fetch(`${this.baseURL}/transaction/send/initialize`, {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson.publicKey;
+    }
+
+    async sendTransactionFinalize(payload: TransactionFinalizePayload): Promise<string> {
+        const resp = await fetch(`${this.baseURL}/transaction/send/finalize`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(payload)
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+
+        const respJson = await resp.json();
+        return respJson.hash;
+    }
+
+    async signTransactionInitialize(): Promise<UrlEncodedPublicKeyCredentialRequestOptions> {
+        const resp = await fetch(`${this.baseURL}/transaction/sign/initialize`, {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson.publicKey;
+    }
+
+    async signTransactionFinalize(payload: TransactionFinalizePayload): Promise<string> {
+        const resp = await fetch(`${this.baseURL}/transaction/sign/finalize`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(payload)
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson.transaction;
     }
 }

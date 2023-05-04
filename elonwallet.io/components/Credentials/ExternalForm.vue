@@ -28,8 +28,11 @@ onMounted(async () => {
         otp.value = await enclaveApiClient.getOTP();
     } catch (error) {
         displayNotificationFromError(error);
-        if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
-            navigateTo("/login")
+        if (error instanceof HttpError) {
+            if (error.type === HttpErrorType.Unauthorized)
+                navigateTo("/login")
+            else if (error.type === HttpErrorType.Forbidden)
+                navigateTo("/reauthenticate?redirect=%2Fcredentials")
         }
     }
 })

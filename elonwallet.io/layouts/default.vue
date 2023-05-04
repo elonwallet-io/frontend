@@ -12,21 +12,5 @@
 
 <script setup lang="ts">
 const notification = useNotificationTimer();
-const ready = ref(false);
-
-const email = useEmail();
-const backendJWT = useBackendJWT();
-const enclaveURL = useEnclaveURL();
-
-onBeforeMount(() => {
-    email.value = localStorage.getItem('email')!;
-    backendJWT.value = localStorage.getItem('backend_jwt')!;
-    enclaveURL.value = localStorage.getItem('enclave_url')!;
-    console.log(email.value)
-    console.log(backendJWT.value)
-    console.log(enclaveURL.value)
-
-    ready.value = true;
-})
-
+const ready = useSetup();
 </script>

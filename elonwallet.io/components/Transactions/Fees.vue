@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { fromWei } from '~/lib/UnitConverter';
+import { formatCurrency } from '~/lib/UnitConverter';
 const wallet = useCurrentWallet();
 const network = useCurrentNetwork()
 
@@ -53,14 +53,14 @@ watch([wallet, network], async () => {
 })
 
 const maxFee = computed(() => {
-    return parseFloat(fromWei(fees.value?.estimated_fees ?? "0", network.value!.decimals)).toFixed(8)
+    return formatCurrency(fees.value?.estimated_fees ?? "0", network.value.decimals, 8);
 })
 
 const baseFee = computed(() => {
-    return parseFloat(fromWei(fees.value?.base_fee ?? "0", network.value!.decimals)).toFixed(8)
+    return formatCurrency(fees.value?.base_fee ?? "0", network.value.decimals, 8);
 })
 
 const tip = computed(() => {
-    return parseFloat(fromWei(fees.value?.tip ?? "0", network.value!.decimals)).toFixed(8)
+    return formatCurrency(fees.value?.tip ?? "0", network.value.decimals, 8);
 })
 </script>

@@ -1,4 +1,6 @@
+import { TypedDataDomain, TypedDataField } from "ethers"
 import { UrlEncodedPublicKeyCredential } from "./webauthn"
+import { SignClientTypes, SessionTypes } from "@walletconnect/types"
 
 export interface WebauthnCredential {
     name: string,
@@ -33,18 +35,6 @@ export interface User {
 export interface PublicWallet {
     name: string,
     address: string
-}
-
-export interface TransactionInfo {
-    chain: string,
-    from: string,
-    to: string,
-    amount: string,
-}
-
-export interface TransactionFinalizePayload {
-    assertion_response: UrlEncodedPublicKeyCredential,
-    transaction_info: TransactionInfo
 }
 
 export interface CreateCredentialFinalizePayload {
@@ -101,4 +91,57 @@ export interface OTP {
     valid_until: number,
     times_tried: number,
     active: boolean
+}
+
+export interface WalletConnectTransactionParams {
+    from: string,
+    to: string,
+    data: string,
+    gasLimit?: string,
+    gasPrice?: string,
+    value?: string,
+    nonce?: string
+}
+
+export interface TransactionParams {
+    chain: string,
+    from: string,
+    to: string,
+    data?: string,
+    gas?: string,
+    gas_price?: string,
+    value?: string,
+    nonce?: string
+}
+
+export interface TransactionFinalizePayload {
+    assertion_response: UrlEncodedPublicKeyCredential,
+    transaction_params: TransactionParams
+}
+
+export interface SignTypedData {
+    types: Record<string, Array<TypedDataField>>,
+    primaryType: string,
+    domain: TypedDataDomain,
+    message: Record<string, any>
+}
+
+export interface WcViewEvent {
+    view: WcViews,
+    data?: WcData
+    proposal?: SignClientTypes.EventArguments['session_proposal']
+}
+
+export interface WcData {
+    requestEvent: SignClientTypes.EventArguments['session_request'],
+    requestSession: SessionTypes.Struct
+}
+
+export enum WcViews {
+    Connect,
+    SignMessage,
+    SignTypedData,
+    SendTransaction,
+    SignTransaction,
+    SessionProposal
 }

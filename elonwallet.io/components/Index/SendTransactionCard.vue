@@ -26,7 +26,8 @@
 </template>
 
 <script setup lang="ts">
-import { toWei, fromWei } from '~/lib/UnitConverter';
+import { isAddress, parseUnits } from 'ethers';
+import { formatCurrency } from '~/lib/UnitConverter';
 import { isRequired, isValidNumber, isGreaterThan } from '~/lib/VuetifyValidationRules';
 import { UINotificationType } from '~/lib/types';
 import { solveLoginChallenge } from '~/lib/webauthn';
@@ -38,13 +39,13 @@ const { balance } = useBalance();
 const { fees } = useFees();
 const { displayNotificationFromError, displayNotification } = useNotification();
 const transactionForm = ref();
-const emit = defineEmits(['on-close'])
+const emit = defineEmits(['on-response'])
 
 const addressOrContactEmail = ref('');
 const addressOrContactEmailRules = [
     (value: string) => {
         const isContactEmail = contacts.value!.find(item => item.email === value);
-        const isWalletAddress = /^0x[0-9a-fA-F]{40}$/.test(value);
+        const isWalletAddress = /^0x[0-9a-fA-F]{40}$/.test(value) && isAddress(value);
         if (isContactEmail || isWalletAddress)
             return true
 
@@ -58,8 +59,11 @@ const amountRules = [
     isValidNumber("Amount"),
     isGreaterThan("Amount", 0),
     (value: number) => {
-        const maxAmount = parseFloat(fromWei(balance.value!, network.value!.decimals)) - parseFloat(fromWei(fees.value!.estimated_fees, network.value!.decimals))
-        if (value < maxAmount) return true
+        const balanceFormatted = formatCurrency(balance.value!, network.value.decimals);
+        const estimatedFeesFormatted = formatCurrency(fees.value!.estimated_fees, network.value.decimals);
+        const maxAmount = parseFloat(balanceFormatted) - parseFloat(estimatedFeesFormatted)
+        if (value < maxAmount)
+            return true
 
         return 'Amount must be smaller than balance plus fees'
     }
@@ -86,7 +90,7 @@ const receiverAddress = computed(() => {
 
 const onDiscard = async () => {
     transactionForm.value.reset();
-    emit('on-close');
+    emit('on-response');
 }
 
 const onSend = async () => {
@@ -98,7 +102,7 @@ const onSend = async () => {
         await sendTransaction()
         displayNotification("Transaction sent", "Successfully sent the transaction. Your balance and recent transactions will update soon.", UINotificationType.Success)
         transactionForm.value.reset();
-        emit('on-close');
+        emit('on-response');
     } catch (error) {
         displayNotificationFromError(error);
     }
@@ -107,15 +111,15 @@ const onSend = async () => {
 const sendTransaction = async () => {
     const enclaveApiClient = useEnclave();
 
-    const options = await enclaveApiClient.transactionInitialize();
+    const options = await enclaveApiClient.sendTransactionInitialize();
     const credential = await solveLoginChallenge(options);
-    await enclaveApiClient.transactionFinalize({
+    await enclaveApiClient.sendTransactionFinalize({
         assertion_response: credential,
-        transaction_info: {
-            amount: toWei(amount.value!.toString()),
+        transaction_params: {
             chain: network.value!.chain,
             from: wallet.value!.address,
-            to: receiverAddress.value
+            to: receiverAddress.value,
+            value: parseUnits(amount.value!.toString(), network.value.decimals).toString(),
         }
     });
 }

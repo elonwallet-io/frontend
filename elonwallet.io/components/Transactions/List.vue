@@ -22,16 +22,16 @@ const { contacts } = useContacts();
 const stepSize = 10;
 const page = ref(1);
 
-const { data: transactions, error, refresh } = useAsyncDataWithCache<Transaction[]>('transactions', async () => {
+const { data: transactions, error: transactionsError, refresh } = useAsyncDataWithCache<Transaction[]>('transactions', async () => {
     const resp = await backendApiClient.getTransactions(currentWallet.value.address, currentNetwork.value.chain, backendJWT.value)
     //const resp = await backendApiClient.getTransactions("0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97", currentNetwork.value.chain, backendJWT.value)
     return resp.transactions;
 })
 
-watch(error, () => {
-    if (error.value) {
-        displayNotificationFromError(error);
-        if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
+watch(transactionsError, () => {
+    if (transactionsError.value) {
+        displayNotificationFromError(transactionsError.value);
+        if (transactionsError.value instanceof HttpError && transactionsError.value.type === HttpErrorType.Unauthorized) {
             navigateTo("/login")
         }
     }

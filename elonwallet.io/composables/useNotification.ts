@@ -12,7 +12,7 @@ export default function () {
         }
     }
 
-    const displayNotificationFromError = (error: unknown) => {
+    const displayNotificationFromError = (error: any) => {
         if (error instanceof HttpError) {
             displayHttpErrorNotificaton(error);
         } else {
