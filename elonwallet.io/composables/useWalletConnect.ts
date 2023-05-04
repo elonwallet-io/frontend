@@ -8,7 +8,6 @@ import { JsonRpcResponse } from "@walletconnect/jsonrpc-utils";
 export default function () {
     const web3wallet = ref<Client>();
     const config = useRuntimeConfig();
-    const session = ref<SessionTypes.Struct>();
     const { networks } = useNetworks();
     const { wallets } = useWallets();
     const viewEvents = ref<WcViewEvent>({
@@ -27,7 +26,7 @@ export default function () {
                 name: 'ElonWallet',
                 description: 'ElonWallet Development Version',
                 url: 'www.walletconnect.com',
-                icons: []
+                icons: ['https://avatars.githubusercontent.com/u/37784886']
             }
         })
 
@@ -40,6 +39,16 @@ export default function () {
         web3wallet.value!.off('session_proposal', onSessionProposal)
         web3wallet.value!.off('session_request', onSessionRequest)
         web3wallet.value!.off('session_delete', data => console.log('delete', data))
+
+        const sessions = web3wallet.value!.getActiveSessions();
+        for (const key in sessions) {
+            const session = sessions[key];
+            const reason = getSdkError('USER_DISCONNECTED')
+            await web3wallet.value!.disconnectSession({
+                topic: session.topic,
+                reason: reason
+            })
+        }
     })
 
     const connect = async (uri: string) => {
@@ -51,8 +60,6 @@ export default function () {
         const { topic, params, id } = requestEvent
         const { request } = params
         const requestSession = web3wallet.value!.getActiveSessions()[topic]
-
-        console.log(params)
 
         switch (request.method) {
             case 'eth_sign':
@@ -92,43 +99,13 @@ export default function () {
     }
 
     const onSessionProposal = async (requestEvent: SignClientTypes.EventArguments['session_proposal']) => {
-        const { id, params } = requestEvent
+        console.log('session_proposal', requestEvent)
 
-        console.log(params)
-
-        const approvedNamespaces = buildApprovedNamespaces({
-            proposal: params,
-            supportedNamespaces: {
-                eip155: {
-                    chains: CAIP2FormattedNetworks.value,
-                    methods: ["personal_sign", "eth_sendTransaction", "eth_signTransaction", "eth_signTypedData", "eth_sign"],
-                    events: ["accountsChanged", "chainChanged"],
-                    accounts: CAIP10FormmatedWallets.value
-                },
-            },
-        });
-
-
-        session.value = await web3wallet.value!.approveSession({
-            id: id,
-            namespaces: approvedNamespaces
-        })
-    }
-
-    const CAIP2FormattedNetworks = computed(() => {
-        return networks.value?.map(n => `eip155:${parseInt(n.chain, 16)}`) ?? []
-    })
-
-    const CAIP10FormmatedWallets = computed(() => {
-        const accounts = new Array<string>();
-
-        for (const wallet of wallets.value ?? []) {
-            for (const network of CAIP2FormattedNetworks.value) {
-                accounts.push(`${network}:${wallet.address}`);
-            }
+        viewEvents.value = {
+            view: WcViews.SessionProposal,
+            proposal: requestEvent
         }
-        return accounts;
-    })
+    }
 
     const onRespondSessionRequest = async (response: JsonRpcResponse, requestEvent: SignClientTypes.EventArguments['session_request']) => {
         console.log(response, requestEvent)
@@ -136,10 +113,22 @@ export default function () {
         web3wallet.value!.respondSessionRequest({ topic: requestEvent.topic, response: response })
     }
 
+    const onRespondSessionProposal = async (responseType: "approve" | "reject", params: any) => {
+        console.log(responseType, params)
+        viewEvents.value = { view: WcViews.Connect }
+
+        if (responseType === "approve") {
+            await web3wallet.value!.approveSession(params)
+        } else {
+            await web3wallet.value!.rejectSession(params)
+        }
+    }
+
 
     return {
         connect,
         viewEvents,
-        onRespondSessionRequest
+        onRespondSessionRequest,
+        onRespondSessionProposal
     }
 }

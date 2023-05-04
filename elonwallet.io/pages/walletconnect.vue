@@ -21,6 +21,8 @@
         <DialogSignTransaction v-else-if="viewEvents.view === WcViews.SignTransaction"
             :request-event="viewEvents.data!.requestEvent" :request-session="viewEvents.data!.requestSession"
             @response="onRespondSessionRequest" />
+        <DialogSessionProposal v-else-if="viewEvents.view === WcViews.SessionProposal" :request-event="viewEvents.proposal!"
+            @response="onRespondSessionProposal" />
     </div>
 </template>
 
@@ -34,7 +36,7 @@ const uriRules = [
     isRequired("WalletConnect URI"),
 ];
 
-const { connect, viewEvents, onRespondSessionRequest } = useWalletConnect();
+const { connect, viewEvents, onRespondSessionRequest, onRespondSessionProposal } = useWalletConnect();
 
 const onConnect = async () => {
     const { valid } = await form.value.validate();

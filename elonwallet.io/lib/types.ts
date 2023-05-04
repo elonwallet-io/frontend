@@ -129,6 +129,7 @@ export interface SignTypedData {
 export interface WcViewEvent {
     view: WcViews,
     data?: WcData
+    proposal?: SignClientTypes.EventArguments['session_proposal']
 }
 
 export interface WcData {
@@ -141,5 +142,6 @@ export enum WcViews {
     SignMessage,
     SignTypedData,
     SendTransaction,
-    SignTransaction
+    SignTransaction,
+    SessionProposal
 }
