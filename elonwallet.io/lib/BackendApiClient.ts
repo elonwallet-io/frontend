@@ -76,15 +76,35 @@ export class BackendApiClient {
         }
     }
 
-    async addWallet(name: string, address: string, email: string, jwt: string): Promise<void> {
-        const resp = await fetch(`${this.baseURL}/users/${encodeURIComponent(email)}/wallets`, {
+    async addWalletInitialize(address: string, jwt: string): Promise<string> {
+        const resp = await fetch(`${this.baseURL}/users/my/wallets/initialize`, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${jwt}`
             },
-            body: JSON.stringify({ name: name, address: address })
+            body: JSON.stringify({ address: address })
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const walletJson = await resp.json();
+        return walletJson.challenge;
+    }
+
+    async addWalletFinalize(name: string, address: string, signature: string, jwt: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/users/my/wallets/finalize`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`
+            },
+            body: JSON.stringify({ name: name, address: address, signature: signature })
         });
 
         if (resp.status !== 201) {

@@ -58,6 +58,7 @@ const onSave = async () => {
         walletForm.value.reset();
         displayNotification("Wallet created", `Wallet ${name} has been created successfully`, UINotificationType.Success);
     } catch (error) {
+        console.log(error)
         displayNotificationFromError(error);
         if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
             navigateTo("/login")
@@ -68,14 +69,14 @@ const onSave = async () => {
 const createWallet = async (name: string, visible: boolean) => {
     const enclaveApiClient = useEnclave();
     const backendJWT = useBackendJWT();
-    const email = useEmail();
 
     await enclaveApiClient.createWallet(name, visible);
     await refresh();
     if (visible) {
-        const wallet = wallets.value!.find(item => item.name === name);
-        await backendApiClient.addWallet(wallet!.name, wallet!.address, email.value, backendJWT.value)
+        const wallet = wallets.value!.find(item => item.name === name)!;
+        const challenge = await backendApiClient.addWalletInitialize(wallet.address, backendJWT.value);
+        const signature = await enclaveApiClient.signPersonal(challenge, wallet.address);
+        await backendApiClient.addWalletFinalize(wallet.name, wallet.address, signature, backendJWT.value);
     }
-
 }
 </script>
