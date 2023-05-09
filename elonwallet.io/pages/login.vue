@@ -44,7 +44,7 @@ const onLogin = async () => {
 
     try {
         await login();
-        navigateTo("/")
+        navigateTo("/app")
     }
     catch (error) {
         displayNotificationFromError(error);
