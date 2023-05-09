@@ -42,12 +42,27 @@ npm run preview
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
 
-## Build and Run with docker
+## Build and Run with docker (Example)
 
 Build the container image locally
 
 ```bash
 docker build -t frontend .
+```
+
+Create a volume for the certificates
+
+```bash
+docker volume create certs
+```
+
+Fill the volume with your certificate files
+
+```bash
+docker container create -v certs:/data --name helper busybox true
+docker cp frontend-cert.pem helper:/data
+docker cp frontend-key.pem helper:/data
+docker rm helper
 ```
 
 Run the image
@@ -56,4 +71,4 @@ Run the image
 docker run -d -p 80:80 -p 443:443 -v certs:/certs frontend
 ```
 
-Attention: Be sure you have saved the server certificate as __elonwallet.io.pem__ and the key as __elonwallet.io-key.pem__ inside the __certs__ volume.
+Attention: The provided example nginx.conf expects the server to run under the domain elonwallet.io. Change this accordingly if needed.
