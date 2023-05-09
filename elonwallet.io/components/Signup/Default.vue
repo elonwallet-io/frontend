@@ -9,6 +9,12 @@
                 <v-btn type="submit" variant="elevated" color="primary" block @click="onSignup">Sign up</v-btn>
             </v-form>
         </div>
+        <div class="p-4 border rounded-md text-center text-lg">
+            <span>Already have an account?</span>
+            <NuxtLink to="/login" class="text-blue-600">
+                Sign in
+            </NuxtLink>
+        </div>
     </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
     <div class="flex items-end text-white">
-        <NuxtLink to="/">
+        <NuxtLink to="/app">
             <span class="text-4xl hover:text-gray-200 ">
                 ElonWallet
             </span>
