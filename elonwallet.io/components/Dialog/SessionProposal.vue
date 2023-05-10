@@ -69,7 +69,7 @@ const requiredChainNames = computed(() => {
     }) ?? [];
 
 
-    return networks.value?.filter(n => chainHex.includes(n.chain)).map(n => n.name).join(", ");
+    return networks.value?.filter(n => chainHex.includes(n.chain_id_hex)).map(n => n.name).join(", ");
 })
 
 const requiredMethods = computed(() => {
@@ -88,7 +88,7 @@ const optionalChainNames = computed(() => {
     }) ?? [];
 
 
-    return networks.value?.filter(n => chainHex.includes(n.chain)).map(n => n.name).join(", ");
+    return networks.value?.filter(n => chainHex.includes(n.chain_id_hex)).map(n => n.name).join(", ");
 })
 
 const optionalMethods = computed(() => {
@@ -113,7 +113,7 @@ const approvedChains = computed(() => {
         return requiredChainNames.value?.includes(n.name) || (allowOptional.value && optionalChainNames.value?.includes(n.name))
     })
 
-    return nets?.map(n => `eip155:${parseInt(n.chain, 16)}`) ?? []
+    return nets?.map(n => `eip155:${n.chain_id}`) ?? []
 })
 
 const approvedWallets = computed(() => {

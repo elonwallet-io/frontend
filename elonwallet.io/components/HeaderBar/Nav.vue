@@ -61,6 +61,7 @@ const onLogout = async () => {
     try {
         const enclaveApiClient = useEnclave();
         await enclaveApiClient.logout();
+        clearNuxtData();
         localStorage.clear();
         navigateTo("/login")
     }

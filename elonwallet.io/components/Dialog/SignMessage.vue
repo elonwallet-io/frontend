@@ -51,9 +51,8 @@ const onClose = (response: JsonRpcResponse) => {
 }
 
 const chainName = computed(() => {
-    const chainInt = parseInt(props.requestEvent.params.chainId.replace("eip155:", ""), 10)
-    const chainHex = `0x${chainInt.toString(16)}`
-    return networks.value?.find(n => n.chain === chainHex)?.name;
+    const chainID = parseInt(props.requestEvent.params.chainId.replace("eip155:", ""), 10)
+    return networks.value?.find(n => n.chain_id === chainID)?.name;
 })
 
 const signingParams = computed(() => {

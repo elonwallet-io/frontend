@@ -55,10 +55,9 @@ const onSave = async () => {
     try {
         await createWallet(walletName.value, walletVisibility.value);
         dialog.value = false;
+        displayNotification("Wallet created", `Wallet ${walletName.value} has been created successfully`, UINotificationType.Success);
         walletForm.value.reset();
-        displayNotification("Wallet created", `Wallet ${name} has been created successfully`, UINotificationType.Success);
     } catch (error) {
-        console.log(error)
         displayNotificationFromError(error);
         if (error instanceof HttpError && error.type === HttpErrorType.Unauthorized) {
             navigateTo("/login")

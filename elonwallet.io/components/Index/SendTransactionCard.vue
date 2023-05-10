@@ -116,7 +116,7 @@ const sendTransaction = async () => {
     await enclaveApiClient.sendTransactionFinalize({
         assertion_response: credential,
         transaction_params: {
-            chain: network.value!.chain,
+            chain: network.value.chain_id_hex,
             from: wallet.value!.address,
             to: receiverAddress.value,
             value: parseUnits(amount.value!.toString(), network.value.decimals).toString(),
