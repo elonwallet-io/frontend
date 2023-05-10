@@ -65,10 +65,15 @@ docker cp frontend-key.pem helper:/data
 docker rm helper
 ```
 
+Replace the hardcoded domain inside the webflow index page and nginx config with one you own
+```bash
+sed -i 's/https:\/\/elonwallet\.io/<REPLACE_WITH_YOUR_DOMAIN>/g' ./public/index.html
+sed -i 's/elonwallet\.io/<REPLACE_WITH_YOUR_DOMAIN>/g' nginx.conf
+```
+
 Run the image
 
 ```bash
 docker run -d -p 80:80 -p 443:443 -v certs:/certs frontend
 ```
 
-Attention: The provided example nginx.conf expects the server to run under the domain elonwallet.io. Change this accordingly if needed.
