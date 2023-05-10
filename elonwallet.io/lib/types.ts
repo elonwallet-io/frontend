@@ -74,10 +74,12 @@ export interface TransactionResponse {
 
 export interface Network {
     name: string,
-    chain: string,
+    chain_id: number,
+    chain_id_hex: string,
     block_explorer: string,
     currency: string,
-    decimals: number
+    decimals: number,
+    testnet: boolean
 }
 
 export interface Fees {

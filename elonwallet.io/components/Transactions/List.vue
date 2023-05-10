@@ -23,8 +23,8 @@ const stepSize = 10;
 const page = ref(1);
 
 const { data: transactions, error: transactionsError, refresh } = useAsyncDataWithCache<Transaction[]>('transactions', async () => {
-    const resp = await backendApiClient.getTransactions(currentWallet.value.address, currentNetwork.value.chain, backendJWT.value)
-    //const resp = await backendApiClient.getTransactions("0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97", currentNetwork.value.chain, backendJWT.value)
+    const resp = await backendApiClient.getTransactions(currentWallet.value.address, currentNetwork.value.chain_id_hex, backendJWT.value)
+    //const resp = await backendApiClient.getTransactions("0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97", currentNetwork.value.chain_id_hex, backendJWT.value)
     return resp.transactions;
 })
 

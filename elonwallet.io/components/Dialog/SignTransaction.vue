@@ -57,7 +57,7 @@ const chainHex = computed(() => {
 })
 
 const chainName = computed(() => {
-    return networks.value?.find(n => n.chain === chainHex.value)?.name;
+    return networks.value?.find(n => n.chain_id_hex === chainHex.value)?.name;
 })
 
 const tx = computed((): WalletConnectTransactionParams => {

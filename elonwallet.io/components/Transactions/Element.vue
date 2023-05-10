@@ -92,7 +92,7 @@ const onClickTransaction = () => {
 const onViewBlockExplorer = (evt: Event) => {
     evt.preventDefault();
     evt.stopPropagation();
-    window.open(`${props.currentNetwork.block_explorer}${props.transaction.hash}`, '_blank')?.focus();
+    window.open(`${props.currentNetwork.block_explorer}/tx/${props.transaction.hash}`, '_blank')?.focus();
 }
 
 const blockExplorer = computed(() => {

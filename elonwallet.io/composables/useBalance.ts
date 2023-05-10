@@ -8,7 +8,7 @@ export default function () {
     const wallet = useCurrentWallet();
 
     const { data: balance, error: balanceError, refresh } = useAsyncDataWithCache<string>("balance", async () => {
-        return await backendApiClient.getBalance(wallet.value.address, network.value.chain, backendJWT.value);
+        return await backendApiClient.getBalance(wallet.value.address, network.value.chain_id_hex, backendJWT.value);
     });
 
     watch(balanceError, () => {
