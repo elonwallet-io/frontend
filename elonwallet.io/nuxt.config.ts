@@ -24,7 +24,10 @@ export default defineNuxtConfig({
   telemetry: false,
   app: {
     head: {
-      title: "ElonWallet"
+      title: "ElonWallet",
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/images/favicon.png' }
+      ]
     }
   },
 })
