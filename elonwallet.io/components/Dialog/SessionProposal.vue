@@ -154,7 +154,6 @@ const onApprove = async () => {
             },
         },
     });
-    console.log(approvedNamespaces);
 
     const response = {
         id: props.requestEvent.id,
