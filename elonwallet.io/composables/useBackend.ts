@@ -1,7 +1,8 @@
 import { BackendApiClient } from "~~/lib/BackendApiClient"
 
 export default function () {
-    const backendURL = "http://localhost:8080";
+    const config = useRuntimeConfig();
+    const backendURL = config.public.backendUrl;
     const backendApiClient = new BackendApiClient(backendURL);
 
     return backendApiClient

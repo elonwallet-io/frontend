@@ -1,23 +1,20 @@
 import { Core } from '@walletconnect/core'
-import { buildApprovedNamespaces, getSdkError } from "@walletconnect/utils";
+import { getSdkError } from "@walletconnect/utils";
 import Client, { Web3Wallet } from '@walletconnect/web3wallet'
-import { SignClientTypes, SessionTypes } from '@walletconnect/types'
+import { SignClientTypes } from '@walletconnect/types'
 import { WcViews, WcViewEvent } from '~/lib/types';
 import { JsonRpcResponse } from "@walletconnect/jsonrpc-utils";
 
 export default function () {
     const web3wallet = ref<Client>();
     const config = useRuntimeConfig();
-    const { networks } = useNetworks();
-    const { wallets } = useWallets();
     const viewEvents = ref<WcViewEvent>({
         view: WcViews.Connect,
     })
 
     onMounted(async () => {
         const core = new Core({
-            projectId: config.public.projectId,
-            logger: 'debug'
+            projectId: config.public.projectId
         })
 
         web3wallet.value = await Web3Wallet.init({
@@ -32,13 +29,11 @@ export default function () {
 
         web3wallet.value.on('session_proposal', onSessionProposal)
         web3wallet.value.on('session_request', onSessionRequest)
-        web3wallet.value.on('session_delete', data => console.log('delete', data))
     })
 
     onUnmounted(async () => {
         web3wallet.value!.off('session_proposal', onSessionProposal)
         web3wallet.value!.off('session_request', onSessionRequest)
-        web3wallet.value!.off('session_delete', data => console.log('delete', data))
 
         const sessions = web3wallet.value!.getActiveSessions();
         for (const key in sessions) {

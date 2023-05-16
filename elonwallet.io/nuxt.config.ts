@@ -2,7 +2,8 @@
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      projectId: import.meta.env.PROJECT_ID?.toString() ?? ""
+      projectId: import.meta.env.PROJECT_ID?.toString() ?? "",
+      backendUrl: import.meta.env.BACKEND_URL?.toString() ?? ""
     }
   },
   css: ['~/assets/css/main.css', 'vuetify/lib/styles/main.sass', '@mdi/font/css/materialdesignicons.min.css'],
