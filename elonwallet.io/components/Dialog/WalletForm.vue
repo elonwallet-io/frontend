@@ -67,15 +67,8 @@ const onSave = async () => {
 
 const createWallet = async (name: string, visible: boolean) => {
     const enclaveApiClient = useEnclave();
-    const backendJWT = useBackendJWT();
 
     await enclaveApiClient.createWallet(name, visible);
     await refresh();
-    if (visible) {
-        const wallet = wallets.value!.find(item => item.name === name)!;
-        const challenge = await backendApiClient.addWalletInitialize(wallet.address, backendJWT.value);
-        const signature = await enclaveApiClient.signPersonal(challenge, wallet.address);
-        await backendApiClient.addWalletFinalize(wallet.name, wallet.address, signature, backendJWT.value);
-    }
 }
 </script>
