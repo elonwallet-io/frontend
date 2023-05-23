@@ -26,8 +26,7 @@ export class HttpError extends Error {
                 errorJson = await resp.json();
                 return new HttpError(errorJson.message, HttpErrorType.Conflict);
             case 404:
-                errorJson = await resp.json();
-                return new HttpError(errorJson.message, HttpErrorType.NotFound);
+                return new HttpError("Element not found", HttpErrorType.NotFound);
             case 403:
                 return new HttpError("", HttpErrorType.Forbidden);
             case 401:
