@@ -6,7 +6,7 @@
             <span class="flex-shrink mx-4 text-custom-light-blue opacity-80">or</span>
             <div class="flex-grow border-t-2 border-custom-light-blue opacity-30"></div>
         </div>
-        <v-form ref="form" @submit.prevent>
+        <v-form ref="form" validate-on="blur" @submit.prevent>
             <v-text-field variant="solo" v-model="uri" :rules="uriRules" label="WalletConnect URI" />
             <v-btn type="submit" variant="elevated" color="primary" block @click="onConnect">Connect</v-btn>
         </v-form>

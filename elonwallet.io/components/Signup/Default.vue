@@ -2,7 +2,7 @@
     <div class="flex flex-col gap-6 p-8 bg-white shadow-md rounded-md">
         <h1 class="text-3xl text-center">Sign up for ElonWallet</h1>
         <div class="p-6 border rounded-md">
-            <v-form ref="form" class="flex flex-col gap-2 w-80" @submit.prevent>
+            <v-form ref="form" validate-on="blur" class="flex flex-col gap-2 w-80" @submit.prevent>
                 <v-text-field variant="solo" v-model="name" :rules="nameRules" label="Name"
                     hint="Note: This name will be publicly visible" />
                 <v-text-field variant="solo" v-model="email" :rules="emailRules" label="Email address" />

@@ -3,7 +3,7 @@
         <p>1. Choose a unique name for your new credential.</p>
         <p>2. Hit save to start the webauthn registration flow.</p>
         <p>3. Try logging in with your new credential.</p>
-        <v-form class="mt-4" ref="credentialForm" @submit.prevent>
+        <v-form class="mt-4" validate-on="blur" ref="credentialForm" @submit.prevent>
             <v-text-field variant="solo" v-model="credentialName" :rules="credentialNameRules" label="Credential name" />
             <div class="flex justify-end">
                 <v-btn variant="text" color="primary" @click="onDiscard">Discard</v-btn>

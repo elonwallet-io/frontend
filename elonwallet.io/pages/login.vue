@@ -3,7 +3,7 @@
         <div class="flex flex-col gap-6 p-8 bg-white shadow-md rounded-md">
             <h1 class="text-3xl text-center">Sign in to ElonWallet</h1>
             <div class="p-8 border rounded-md">
-                <v-form ref="form" class="flex flex-col gap-2 w-72" @submit.prevent>
+                <v-form ref="form" validate-on="blur" class="flex flex-col gap-2 w-72" @submit.prevent>
                     <v-text-field variant="solo" v-model="email" :rules="emailRules" label="Email address" />
                     <v-btn type="submit" variant="elevated" color="primary" block @click="onLogin">Sign in</v-btn>
                 </v-form>

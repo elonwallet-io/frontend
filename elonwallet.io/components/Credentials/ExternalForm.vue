@@ -3,7 +3,7 @@
         <p>1. Visit https://elonwallet.io/new-device on the device</p>
         <p>2. Enter the code you see below to authenticate.</p>
         <p>3. Follow the instructions to add your credential.</p>
-        <v-form class="mt-4" ref="credentialForm" @submit.prevent>
+        <v-form class="mt-4" validate-on="blur" ref="credentialForm" @submit.prevent>
             <v-text-field variant="solo" v-model="otpSecret" label="One Time Password" readonly />
             <div class="flex justify-end">
                 <v-btn variant="text" color="primary" @click="$emit('discard')">Discard</v-btn>
