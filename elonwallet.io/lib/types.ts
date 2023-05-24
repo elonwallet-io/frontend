@@ -102,7 +102,7 @@ export interface WalletConnectTransactionParams {
     gasLimit?: string,
     gasPrice?: string,
     value?: string,
-    nonce?: string
+    nonce?: string,
 }
 
 export interface TransactionParams {
@@ -113,7 +113,8 @@ export interface TransactionParams {
     gas?: string,
     gas_price?: string,
     value?: string,
-    nonce?: string
+    nonce?: string,
+    legacy: boolean,
 }
 
 export interface TransactionFinalizePayload {

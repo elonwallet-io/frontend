@@ -126,7 +126,8 @@ const signTransaction = async (tx: WalletConnectTransactionParams) => {
             gas: tx.gasLimit,
             gas_price: tx.gasPrice,
             nonce: tx.nonce,
-            value: tx.value
+            value: tx.value,
+            legacy: true
         }
     }
 

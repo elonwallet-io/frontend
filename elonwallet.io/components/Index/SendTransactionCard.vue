@@ -120,6 +120,7 @@ const sendTransaction = async () => {
             from: wallet.value!.address,
             to: receiverAddress.value,
             value: parseUnits(amount.value!.toString(), network.value.decimals).toString(),
+            legacy: false,
         }
     });
 }
