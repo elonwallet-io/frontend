@@ -68,6 +68,10 @@ const sender = computed(() => {
         return "My Wallet";
     }
 
+    if (props.transaction.from_address.toLowerCase() === "0xbc04eacb3777480b17016aff2732d7cebe18e7a8") {
+        return "ElonWallet.io"
+    }
+
     for (let contact of props.contacts) {
         if (contact.wallets.find(item => item.address.toLowerCase() === props.transaction.from_address.toLowerCase())) {
             return `${contact.name} (${contact.email})`;
