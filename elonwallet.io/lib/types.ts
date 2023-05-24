@@ -147,3 +147,22 @@ export enum WcViews {
     SignTransaction,
     SessionProposal
 }
+
+export interface EmergencyAccessContact {
+    email: string,
+    enclave_url: string,
+    has_accepted: boolean,
+    has_requested_takeover: boolean,
+    waiting_period_in_days: number,
+    takeover_allowed_after: number,
+    notification_series_id: string,
+}
+
+export interface EmergencyAccessGrant {
+    email: string,
+    enclave_url: string,
+    has_accepted: boolean,
+    has_requested_takeover: boolean,
+    takeover_allowed_after: number,
+    notification_series_id: string,
+}

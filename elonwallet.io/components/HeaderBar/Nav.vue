@@ -43,13 +43,14 @@ interface Setting {
 }
 
 const settings = ref([
-    { name: "Personal" },
+    { name: "Emergency Access" },
     { name: "Credentials" }
 ])
 
 const onClickSetting = (setting: Setting) => {
     switch (setting.name) {
-        case "Personal":
+        case "Emergency Access":
+            navigateTo("/emergency-access")
             break;
         case "Credentials":
             navigateTo("/credentials")

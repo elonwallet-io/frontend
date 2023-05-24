@@ -1,5 +1,5 @@
 import { HttpError } from "./HttpError";
-import { CreateCredentialFinalizePayload, Fees, Network, OTP, SignTypedData, TransactionFinalizePayload, Wallet, WebauthnCredential } from "./types";
+import { CreateCredentialFinalizePayload, EmergencyAccessContact, EmergencyAccessGrant, Fees, Network, OTP, SignTypedData, TransactionFinalizePayload, Wallet, WebauthnCredential } from "./types";
 import { UrlEncodedPublicKeyCredential, UrlEncodedPublicKeyCredentialCreationOptions, UrlEncodedPublicKeyCredentialRequestOptions } from "./webauthn";
 
 export class EnclaveApiClient {
@@ -398,5 +398,143 @@ export class EnclaveApiClient {
 
         const respJson = await resp.json();
         return respJson.transaction;
+    }
+
+    async createEmergencyContact(contact_email: string, waiting_period_in_days: number): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/emergency-access/contacts`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ contact_email: contact_email, waiting_period_in_days: waiting_period_in_days })
+        });
+
+        if (resp.status !== 201) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
+
+    async getEmergencyContacts(): Promise<EmergencyAccessContact[]> {
+        const resp = await fetch(`${this.baseURL}/emergency-access/contacts`, {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson.emergency_contacts;
+    }
+
+    async removeEmergencyContact(contact_email: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/emergency-access/contacts/${encodeURIComponent(contact_email)}`, {
+            method: "DELETE",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
+
+    async denyEmergencyContactAccessRequest(contact_email: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/emergency-access/contacts/${encodeURIComponent(contact_email)}/deny-access`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
+
+    async getEmergencyAccessGrants(): Promise<EmergencyAccessGrant[]> {
+        const resp = await fetch(`${this.baseURL}/emergency-access/grants`, {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+
+        const respJson = await resp.json();
+        return respJson.emergency_access_grants;
+    }
+
+    async respondEmergencyAccessGrantInvitation(grantor_email: string, accept: boolean): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/emergency-access/grants/respond-invitation`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ grantor_email: grantor_email, accept: accept })
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
+
+    async requestEmergencyAccess(grantor_email: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/emergency-access/grants/request-access`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ grantor_email: grantor_email })
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
+    }
+
+    async requestEmergencyAccessTakeover(grantor_email: string): Promise<void> {
+        const resp = await fetch(`${this.baseURL}/emergency-access/grants/request-takeover`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ grantor_email: grantor_email })
+        });
+
+        if (resp.status !== 200) {
+            const error = await HttpError.fromResponse(resp);
+            throw error;
+        }
     }
 }
