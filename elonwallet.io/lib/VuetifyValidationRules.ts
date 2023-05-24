@@ -60,3 +60,12 @@ export function isGreaterThan(name: string, min: number) {
         return `${name} must be greater than ${min}.`
     }
 }
+
+export function isLessThan(name: string, max: number) {
+    return (value: number) => {
+        if (value < max)
+            return true
+
+        return `${name} must be smaller than ${max}.`
+    }
+}

@@ -33,6 +33,7 @@ const props = defineProps<{
 }>();
 
 const backendJWT = useBackendJWT();
+const ownEmail = useEmail();
 const emit = defineEmits(['create-contact'])
 const dialog = ref(false);
 const contactForm = ref();
@@ -57,6 +58,10 @@ const emailRules = [
         }
 
         return true
+    },
+    (value: string) => {
+        if (value !== ownEmail.value) return true
+        return "You cannot add yourself as a contact"
     }
 ];
 

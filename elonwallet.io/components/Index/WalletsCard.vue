@@ -5,9 +5,9 @@
             <DialogWalletForm />
         </div>
         <div class="flex gap-2 pt-2 mx-4">
-            <v-select class="w-1/2" label="Network" variant="solo" color="primary" :items="networkNames"
+            <v-select class="w-1/2" label="Network" variant="underlined" color="primary" :items="networkNames" chips
                 v-model="currentNetworkName" />
-            <v-select class="w-1/2" label="Wallet" variant="solo" color="primary" :items="walletNames"
+            <v-select class="w-1/2" label="Wallet" variant="underlined" color="primary" :items="walletNames" chips
                 v-model="currentWalletName" />
         </div>
     </div>

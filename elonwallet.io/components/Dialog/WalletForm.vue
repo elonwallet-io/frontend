@@ -26,7 +26,6 @@ import { isAlphaNumeric, isRequired, isUnique } from '~/lib/VuetifyValidationRul
 import { HttpError, HttpErrorType } from '~~/lib/HttpError';
 import { UINotificationType } from '~~/lib/types';
 
-const backendApiClient = useBackend();
 const { displayNotification, displayNotificationFromError } = useNotification();
 const { wallets, refresh } = useWallets();
 const dialog = ref(false);
