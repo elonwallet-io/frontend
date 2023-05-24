@@ -8,7 +8,7 @@
             </template>
             <div class="p-4 flex flex-col gap-4 w-2/6 bg-white m-auto">
                 <span class="text-xl">Add a new wallet</span>
-                <v-form ref="walletForm" @submit.prevent>
+                <v-form ref="walletForm" validate-on="blur" @submit.prevent>
                     <v-text-field variant="solo" v-model="walletName" :rules="walletNameRules" label="Wallet name" />
                     <v-switch color="primary" v-model="walletVisibility" label="Allow contacts to see this wallet?" />
                     <div class="flex justify-end">

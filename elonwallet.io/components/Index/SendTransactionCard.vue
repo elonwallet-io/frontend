@@ -1,7 +1,7 @@
 <template>
     <div class="p-2 bg-white shadow-md rounded-md">
         <h3>Specify the transaction details</h3>
-        <v-form class="mt-2" ref="transactionForm" @submit.prevent>
+        <v-form validate-on="blur" class="mt-2" ref="transactionForm" @submit.prevent>
             <div class="flex gap-4">
                 <div class="w-1/2 border">
                     <TransactionsFees />

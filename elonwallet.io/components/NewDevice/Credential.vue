@@ -2,7 +2,7 @@
     <div class="flex flex-col items-center">
         <p class="text-2xl text-center">We are ready to register your credential.</p>
         <p class="text-2xl text-center">Click the button below to add your new credential</p>
-        <v-form ref="form" class="flex flex-col gap-2 w-72 m-8" @submit.prevent>
+        <v-form ref="form" validate-on="blur" class="flex flex-col gap-2 w-72 m-8" @submit.prevent>
             <v-text-field variant="solo" v-model="credentialName" :rules="credentialNameRules" label="Credential Name"
                 hint="Choose a name for your login credential" />
             <v-btn type="submit" variant="elevated" color="primary" block @click="onAddCredential">Add my
