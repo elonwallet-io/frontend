@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="flex justify-end">
-                <v-btn variant="text" color="primary" @click="onDiscard">Discard</v-btn>
+                <v-btn variant="text" color="primary" @click="onClear">Clear</v-btn>
                 <v-btn variant="text" color="primary" @click="onSend">Send</v-btn>
             </div>
         </v-form>
@@ -39,7 +39,9 @@ const { balance } = useBalance();
 const { fees } = useFees();
 const { displayNotificationFromError, displayNotification } = useNotification();
 const transactionForm = ref();
-const emit = defineEmits(['on-response'])
+const emit = defineEmits<{
+    (e: 'on-close'): void
+}>();
 
 const addressOrContactEmail = ref('');
 const addressOrContactEmailRules = [
@@ -87,10 +89,8 @@ const receiverAddress = computed(() => {
     }
 })
 
-
-const onDiscard = async () => {
+const onClear = async () => {
     transactionForm.value.reset();
-    emit('on-response');
 }
 
 const onSend = async () => {
@@ -102,7 +102,7 @@ const onSend = async () => {
         await sendTransaction()
         displayNotification("Transaction sent", "Successfully sent the transaction. Your balance and recent transactions will update soon.", UINotificationType.Success)
         transactionForm.value.reset();
-        emit('on-response');
+        emit('on-close');
     } catch (error) {
         displayNotificationFromError(error);
     }

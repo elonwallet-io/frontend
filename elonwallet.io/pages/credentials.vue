@@ -14,9 +14,10 @@
                                 <span class="opacity-50">{{ credential.currently_used ? `(current)` : '' }}</span>
                             </span>
                         </div>
-                        <v-btn :disabled="credential.currently_used" variant="plain" @click="onClickDelete(credential)">
+                        <DialogConfirm :disable="credential.currently_used"
+                            text="Are you sure you want to delete this credential?" @on-confirm="onClickDelete(credential)">
                             <img src="~/assets/img/trash-can-regular.svg" class="h-5 w-5 m-1" />
-                        </v-btn>
+                        </DialogConfirm>
                     </div>
                 </v-list-item>
             </v-list>

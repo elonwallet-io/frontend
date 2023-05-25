@@ -8,13 +8,15 @@
         <p v-else-if="takeoverWaitPeriodExpired" class="text-red-500">Takeover grace period expired</p>
         <p v-else-if="contact.has_requested_takeover" class="text-amber-500">Takeover pending until {{ takeoverDate }}</p>
         <div>
-            <v-btn v-if="contact.has_requested_takeover" variant="plain" @click="onDenyEmergencyAccessRequest()"
-                size="small">
+            <DialogConfirm v-if="contact.has_requested_takeover"
+                text="Are you sure you want to deny the emergency access request?"
+                @on-confirm="onDenyEmergencyAccessRequest()">
                 <img src="~/assets/img/ban-solid.svg" class="h-5 w-5" title="Deny pending request" />
-            </v-btn>
-            <v-btn variant="plain" @click="onRemoveEmergencyContact()" size="small">
+            </DialogConfirm>
+            <DialogConfirm text="Are you sure you want to remove this emergency contact?"
+                @on-confirm="onRemoveEmergencyContact()">
                 <img src="~/assets/img/trash-can-regular.svg" class="h-5 w-5" title="Remove emergency contact" />
-            </v-btn>
+            </DialogConfirm>
         </div>
     </div>
 </template>

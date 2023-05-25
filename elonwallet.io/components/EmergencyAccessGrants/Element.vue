@@ -8,27 +8,31 @@
         <p v-else-if="takeoverWaitPeriodExpired" class="text-green-500">Takeover grace period expired</p>
         <p v-else-if="grant.has_requested_takeover" class="text-amber-500">Takeover pending until {{ takeoverDate }}</p>
         <div v-if="!grant.has_accepted">
-            <v-btn variant="plain" @click="onRespondGrantInvitation(true)" size="small">
+            <DialogConfirm text="Are you sure you want to accept the emergency access grant invitation?"
+                @on-confirm="onRespondGrantInvitation(true)">
                 <img src="~/assets/img/check-solid.svg" class="h-5 w-5" title="Accept invitation" />
-            </v-btn>
-            <v-btn variant="plain" @click="onRespondGrantInvitation(false)" size="small">
-                <img src="~/assets/img/ban-solid.svg" class="h-5 w-5" title="Deny invitation" />
-            </v-btn>
+            </DialogConfirm>
+            <DialogConfirm text="Are you sure you want to reject the emergency access grant invitation?"
+                @on-confirm="onRespondGrantInvitation(false)">
+                <img src="~/assets/img/ban-solid.svg" class="h-5 w-5" title="Reject invitation" />
+            </DialogConfirm>
         </div>
         <div v-else-if="takeoverWaitPeriodExpired">
-            <v-btn variant="plain" @click="onRequestEmergencyAccessTakeover()" size="small">
+            <DialogConfirm text="Are you sure you want to takeover the account?"
+                @on-confirm="onRequestEmergencyAccessTakeover()">
                 <img src="~/assets/img/key-solid.svg" class="h-5 w-5" title="Request account takeover" />
-            </v-btn>
+            </DialogConfirm>
         </div>
         <div v-else-if="grant.has_requested_takeover">
-            <v-btn disabled variant="plain" @click="onRequestEmergencyAccessTakeover()" size="small">
+            <v-btn disabled variant="plain" size="small">
                 <img src="~/assets/img/key-solid.svg" class="h-5 w-5" title="Request account takeover" />
             </v-btn>
         </div>
         <div v-else>
-            <v-btn variant="plain" @click="onRequestEmergencyAccess()" size="small">
+            <DialogConfirm text="Are you sure you want to request emergency access?"
+                @on-confirm="onRequestEmergencyAccess()">
                 <img src="~/assets/img/key-solid.svg" class="h-5 w-5" title="Request emergency access" />
-            </v-btn>
+            </DialogConfirm>
         </div>
     </div>
 </template>

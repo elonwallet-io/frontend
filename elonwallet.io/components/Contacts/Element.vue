@@ -4,9 +4,9 @@
             <img src="~/assets/img/user-regular.svg" class="h-7 w-7 m-1" />
             <p>{{ contact.name }} </p>
         </div>
-        <v-btn variant="plain" @click="onRemoveContact()" size="small">
-            <img src="~/assets/img/trash-can-regular.svg" class="h-5 w-5" />
-        </v-btn>
+        <DialogConfirm text="Are you sure you want to remove this contact?" @on-confirm="onRemoveContact()">
+            <img src="~/assets/img/trash-can-regular.svg" class="h-5 w-5 m-1" />
+        </DialogConfirm>
     </div>
 </template>
 
