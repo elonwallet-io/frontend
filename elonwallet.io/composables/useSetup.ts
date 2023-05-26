@@ -5,14 +5,18 @@ export default function () {
     const email = useEmail();
     const backendJWT = useBackendJWT();
     const enclaveURL = useEnclaveURL();
-    const preSetupFinished = computed(() => {
-        return !!(email.value && backendJWT.value && enclaveURL.value);
-    })
+    const preSetupFinished = ref(false);
 
     onBeforeMount(() => {
         email.value = localStorage.getItem('email')!;
         backendJWT.value = localStorage.getItem('backend_jwt')!;
         enclaveURL.value = localStorage.getItem('enclave_url')!;
+
+        if (!email.value || !backendJWT.value || !enclaveURL.value) {
+            navigateTo("/login")
+        }
+
+        preSetupFinished.value = true;
     })
 
     const unwatchPreSetup = watch(preSetupFinished, () => {

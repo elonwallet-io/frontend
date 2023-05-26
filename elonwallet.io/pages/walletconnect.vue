@@ -35,6 +35,11 @@ const uri = ref("");
 const uriRules = [
     isRequired("WalletConnect URI"),
 ];
+watchEffect(() => {
+    if (uri.value) {
+        uri.value = uri.value.trim();
+    }
+})
 
 const { connect, viewEvents, onRespondSessionRequest, onRespondSessionProposal } = useWalletConnect();
 

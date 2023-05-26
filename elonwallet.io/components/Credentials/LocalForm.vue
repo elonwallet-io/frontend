@@ -36,6 +36,11 @@ const credentialNameRules = [
     isAlphaNumeric("Credential Name"),
     isUnique("Credential Name", credentialNames)
 ];
+watchEffect(() => {
+    if (credentialName.value) {
+        credentialName.value = credentialName.value.trim();
+    }
+})
 
 const onDiscard = async () => {
     credentialForm.value.reset();

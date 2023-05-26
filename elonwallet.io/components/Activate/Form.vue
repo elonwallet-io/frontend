@@ -16,16 +16,17 @@ import { isAlphaNumeric, isRequired } from '~/lib/VuetifyValidationRules';
 import { registerCredential } from '~/lib/webauthn';
 const { displayNotification, displayNotificationFromError } = useNotification();
 
-const props = defineProps<{
-    email: string,
-}>();
-
 const form = ref();
 const credentialName = ref("");
 const credentialNameRules = [
     isRequired("Credential Name"),
     isAlphaNumeric("Credential Name")
 ];
+watchEffect(() => {
+    if (credentialName.value) {
+        credentialName.value = credentialName.value.trim();
+    }
+})
 
 
 const onRegisterNewCredential = async () => {
@@ -38,7 +39,7 @@ const onRegisterNewCredential = async () => {
 
     try {
         await registerNewCredential();
-        navigateTo("/login")
+        navigateTo("/app")
     }
     catch (error) {
         displayNotificationFromError(error);
@@ -46,10 +47,18 @@ const onRegisterNewCredential = async () => {
 }
 
 const registerNewCredential = async () => {
+    const email = useEmail();
+    const enclaveURL = useEnclaveURL();
+    const backendJWT = useBackendJWT();
     const enclaveApiClient = useEnclave();
 
-    const options = await enclaveApiClient.registerInitialize(props.email);
+    const options = await enclaveApiClient.registerInitialize(email.value);
     const credential = await registerCredential(options);
-    await enclaveApiClient.registerFinalize({ name: credentialName.value, creation_response: credential });
+    backendJWT.value = await enclaveApiClient.registerFinalize({ name: credentialName.value, creation_response: credential });
+
+    //Set this here, because we need to be able to get this when a user refreshes the main page without reauth
+    localStorage.setItem("email", email.value);
+    localStorage.setItem("enclave_url", enclaveURL.value);
+    localStorage.setItem("backend_jwt", backendJWT.value)
 }
 </script>

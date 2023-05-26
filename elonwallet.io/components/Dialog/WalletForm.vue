@@ -39,6 +39,12 @@ const walletNameRules = [
     isAlphaNumeric("Wallet Name"),
     isUnique("Wallet Name", walletNames)
 ];
+watchEffect(() => {
+    if (walletName.value) {
+        walletName.value = walletName.value.trim();
+    }
+})
+
 const walletVisibility = ref(false);
 
 const onDiscard = async () => {

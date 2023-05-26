@@ -9,11 +9,11 @@
 const { displayNotificationFromError } = useNotification();
 
 const props = defineProps<{
-    email: string,
     activationString: string,
 }>();
 
 const emit = defineEmits(['registered']);
+const email = useEmail();
 
 onMounted(async () => {
     try {
@@ -27,8 +27,8 @@ onMounted(async () => {
 
 const activateUser = async () => {
     const backendApiClient = useBackend();
-    await backendApiClient.activateUser(props.email, props.activationString);
+    await backendApiClient.activateUser(email.value, props.activationString);
     const enclaveURL = useEnclaveURL();
-    enclaveURL.value = await backendApiClient.getEnclaveURL(props.email)
+    enclaveURL.value = await backendApiClient.getEnclaveURL(email.value)
 }
 </script>

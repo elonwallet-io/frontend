@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { isEmail, isOTP, isRequired } from '~/lib/VuetifyValidationRules';
 
-const { displayNotificationFromError, displayNotification } = useNotification();
+const { displayNotificationFromError } = useNotification();
 
 const emit = defineEmits(['on-authenticated']);
 
@@ -21,12 +21,22 @@ const emailRules = [
     isRequired("Email"),
     isEmail()
 ];
+watchEffect(() => {
+    if (email.value) {
+        email.value = email.value.trim();
+    }
+})
 
 const otp = ref("");
 const otpRules = [
     isRequired("OTP"),
     isOTP()
 ];
+watchEffect(() => {
+    if (otp.value) {
+        otp.value = otp.value.trim();
+    }
+})
 
 const form = ref();
 

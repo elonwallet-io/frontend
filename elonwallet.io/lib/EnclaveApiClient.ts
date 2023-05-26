@@ -28,7 +28,7 @@ export class EnclaveApiClient {
         return respJson.publicKey;
     }
 
-    async registerFinalize(payload: CreateCredentialFinalizePayload): Promise<void> {
+    async registerFinalize(payload: CreateCredentialFinalizePayload): Promise<string> {
         const resp = await fetch(`${this.baseURL}/register/finalize`, {
             method: "POST",
             headers: {
@@ -43,6 +43,9 @@ export class EnclaveApiClient {
             const error = await HttpError.fromResponse(resp);
             throw error;
         }
+
+        const respJson = await resp.json();
+        return respJson.backend_jwt;
     }
 
     async loginInitialize(): Promise<UrlEncodedPublicKeyCredentialRequestOptions> {
