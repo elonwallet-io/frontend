@@ -13,6 +13,10 @@ export default function () {
         email.value = localStorage.getItem('email')!;
         backendJWT.value = localStorage.getItem('backend_jwt')!;
         enclaveURL.value = localStorage.getItem('enclave_url')!;
+
+        if (!email.value || !backendJWT.value || !enclaveURL.value) {
+            navigateTo("/login")
+        }
     })
 
     const unwatchPreSetup = watch(preSetupFinished, () => {
