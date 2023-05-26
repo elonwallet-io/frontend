@@ -64,6 +64,11 @@ const emailRules = [
         return "You cannot add yourself as a contact"
     }
 ];
+watchEffect(() => {
+    if (email.value) {
+        email.value = email.value.trim();
+    }
+})
 
 const onDiscard = async () => {
     contactForm.value.reset();

@@ -6,15 +6,15 @@
                 <div class="w-1/2 border">
                     <TransactionsFees />
                 </div>
-                <div class="w-1/2">
+                <div class="w-1/2 flex flex-col gap-2">
                     <v-combobox clearable label="Contact or Address" :items="contacts?.map(item => item.email)"
                         variant="solo" v-model="addressOrContactEmail" :rules="addressOrContactEmailRules"
                         class="overflow-hidden" />
                     <v-select :disabled="!currentContact" label="Contact Wallets" variant="solo" color="primary"
                         :items="contactWalletNames" v-model="contactWalletName"
-                        :rules="currentContact ? contactWalletNameRules : undefined" />
+                        :rules="currentContact ? contactWalletNameRules : undefined" class="overflow-hidden" />
                     <v-text-field variant="solo" v-model="amount" :rules="amountRules" label="Amount"
-                        :suffix="network!.currency" />
+                        :suffix="network!.currency" class="overflow-hidden" />
                 </div>
             </div>
             <div class="flex justify-end">
@@ -54,8 +54,15 @@ const addressOrContactEmailRules = [
         return 'Must be either a contact email or a wallet address'
     },
 ];
+watch(addressOrContactEmail, () => {
+    contactWalletName.value = "";
 
-const amount = ref<number>();
+    if (addressOrContactEmail.value) {
+        addressOrContactEmail.value = addressOrContactEmail.value.trim();
+    }
+})
+
+const amount = ref("");
 const amountRules = [
     isRequired("Amount"),
     isValidNumber("Amount"),
@@ -70,6 +77,11 @@ const amountRules = [
         return 'Amount must be smaller than balance plus fees'
     }
 ];
+watchEffect(() => {
+    if (amount.value) {
+        amount.value = amount.value.trim();
+    }
+})
 
 const contactWalletName = ref('');
 const contactWalletNameRules = [
@@ -78,8 +90,6 @@ const contactWalletNameRules = [
 
 const currentContact = computed(() => contacts.value?.find(item => item.email === addressOrContactEmail.value))
 const contactWalletNames = computed(() => currentContact.value?.wallets.map(item => item.name));
-
-watch(addressOrContactEmail, () => contactWalletName.value = "")
 
 const receiverAddress = computed(() => {
     if (currentContact.value && contactWalletName.value) {
@@ -119,7 +129,7 @@ const sendTransaction = async () => {
             chain: network.value.chain_id_hex,
             from: wallet.value!.address,
             to: receiverAddress.value,
-            value: parseUnits(amount.value!.toString(), network.value.decimals).toString(),
+            value: parseUnits(amount.value!, network.value.decimals).toString(),
             legacy: false,
         }
     });

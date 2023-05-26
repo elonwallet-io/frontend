@@ -32,6 +32,12 @@ const emailRules = [
     isRequired("Email"),
     isEmail()
 ];
+watchEffect(() => {
+    if (email.value) {
+        email.value = email.value.trim();
+    }
+})
+
 
 const form = ref();
 

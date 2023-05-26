@@ -55,7 +55,6 @@ const currentWallet = useCurrentWallet();
 const allowedWallets = ref<Wallet[]>([currentWallet.value]);
 const allowOptional = ref(false);
 
-
 const props = defineProps<{
     requestEvent: SignClientTypes.EventArguments['session_proposal'],
 }>();

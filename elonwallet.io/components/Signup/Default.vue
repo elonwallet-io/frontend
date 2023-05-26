@@ -29,12 +29,22 @@ const name = ref("");
 const nameRules = [
     isRequired("Name")
 ];
+watchEffect(() => {
+    if (name.value) {
+        name.value = name.value.trim();
+    }
+})
 
 const email = ref("");
 const emailRules = [
     isRequired("Email"),
     isEmail()
 ];
+watchEffect(() => {
+    if (email.value) {
+        email.value = email.value.trim();
+    }
+})
 
 const form = ref();
 

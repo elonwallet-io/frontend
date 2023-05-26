@@ -26,6 +26,11 @@ const credentialNameRules = [
     isRequired("Credential Name"),
     isAlphaNumeric("Credential Name")
 ];
+watchEffect(() => {
+    if (credentialName.value) {
+        credentialName.value = credentialName.value.trim();
+    }
+})
 
 
 const onRegisterNewCredential = async () => {

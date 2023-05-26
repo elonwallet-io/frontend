@@ -65,6 +65,12 @@ const emailRules = [
         return "You cannot add yourself as an emergency contact"
     }
 ];
+watchEffect(() => {
+    if (email.value) {
+        email.value = email.value.trim();
+    }
+})
+
 const waitingPeriodInDays = ref("");
 const waitingPeriodInDaysRules = [
     isRequired("Waiting Period"),
@@ -72,6 +78,11 @@ const waitingPeriodInDaysRules = [
     isGreaterThan("Waiting Period", 6),
     isLessThan("Waiting Period", 100),
 ];
+watchEffect(() => {
+    if (waitingPeriodInDays.value) {
+        waitingPeriodInDays.value = waitingPeriodInDays.value.trim();
+    }
+})
 
 
 const onDiscard = async () => {
