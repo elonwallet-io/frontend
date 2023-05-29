@@ -14,7 +14,7 @@
                 <p class="ml-2">{{ chainName }}</p>
                 <div class="flex-grow border-t-2 border-custom-light-blue opacity-30 my-3"></div>
                 <h3 class="font-bold text-xl">Transaction Data</h3>
-                <p class="ml-2">{{ tx }}</p>
+                <p class="ml-2">{{ txViewable }}</p>
                 <div class="flex-grow border-t-2 border-custom-light-blue opacity-30 my-3"></div>
                 <h3 class="font-bold text-xl">Method</h3>
                 <p class="ml-2">{{ requestEvent.params.request.method }}</p>
@@ -32,7 +32,7 @@ import { SessionTypes, SignClientTypes } from '@walletconnect/types';
 import { getSdkError } from "@walletconnect/utils";
 import { JsonRpcResponse } from "@walletconnect/jsonrpc-utils";
 import { HttpError, HttpErrorType } from '~/lib/HttpError';
-import { WalletConnectTransactionParams } from '~/lib/types';
+import { TransactionParams } from '~/lib/types';
 const { displayNotificationFromError } = useNotification();
 import { solveLoginChallenge } from '~/lib/webauthn';
 
@@ -60,16 +60,52 @@ const chainName = computed(() => {
     return networks.value?.find(n => n.chain_id_hex === chainHex.value)?.name;
 })
 
-const tx = computed((): WalletConnectTransactionParams => {
+const tx = computed((): TransactionParams => {
     const rawTx = props.requestEvent.params.request.params[0];
+
     return {
+        type: rawTx.type ?? (rawTx.gasPrice ? "0x1" : "0x2"),
         from: rawTx.from,
         to: rawTx.to,
-        data: rawTx.data,
-        gasLimit: BigInt(rawTx.gasLimit ?? "").toString(),
-        gasPrice: BigInt(rawTx.gasPrice ?? "").toString(),
-        nonce: BigInt(rawTx.nonce ?? "").toString(),
-        value: BigInt(rawTx.value ?? "").toString()
+        input: rawTx.data,
+        gas: rawTx.gasLimit,
+        gasPrice: rawTx.gasPrice,
+        maxFeePerGas: rawTx.maxFeePerGas,
+        maxPriorityFeePerGas: rawTx.maxPriorityFeePerGas,
+        nonce: rawTx.nonce,
+        value: rawTx.value,
+        accessList: rawTx.accessList,
+        chainId: rawTx.chainId ?? chainHex.value,
+    }
+})
+
+const txViewable = computed((): TransactionParams => {
+    if (tx.value.type === "0x1") {
+        return {
+            type: tx.value.type,
+            from: tx.value.from,
+            to: tx.value.to,
+            input: tx.value.input,
+            gas: BigInt(tx.value.gas ?? "").toString(),
+            gasPrice: BigInt(tx.value.gasPrice ?? "").toString(),
+            nonce: BigInt(tx.value.nonce ?? "").toString(),
+            value: BigInt(tx.value.value ?? "").toString(),
+            accessList: tx.value.accessList,
+        }
+    } else {
+        return {
+            type: tx.value.type,
+            from: tx.value.from,
+            to: tx.value.to,
+            input: tx.value.input,
+            gas: BigInt(tx.value.gas ?? "").toString(),
+            maxFeePerGas: BigInt(tx.value.maxFeePerGas ?? "").toString(),
+            maxPriorityFeePerGas: BigInt(tx.value.maxPriorityFeePerGas ?? "").toString(),
+            nonce: BigInt(tx.value.nonce ?? "").toString(),
+            value: BigInt(tx.value.value ?? "").toString(),
+            accessList: tx.value.accessList,
+            chainId: tx.value.chainId,
+        }
     }
 })
 
@@ -112,23 +148,13 @@ const onApprove = async () => {
     }
 }
 
-const signTransaction = async (tx: WalletConnectTransactionParams) => {
+const signTransaction = async (tx: TransactionParams) => {
     const enclaveApiClient = useEnclave();
     const options = await enclaveApiClient.signTransactionInitialize();
     const credential = await solveLoginChallenge(options);
     const payload = {
         assertion_response: credential,
-        transaction_params: {
-            chain: chainHex.value,
-            from: tx.from,
-            to: tx.to,
-            data: tx.data,
-            gas: tx.gasLimit,
-            gas_price: tx.gasPrice,
-            nonce: tx.nonce,
-            value: tx.value,
-            legacy: true
-        }
+        transaction_params: tx
     }
 
     const signedTx = await enclaveApiClient.signTransactionFinalize(payload)
