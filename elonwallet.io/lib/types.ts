@@ -95,26 +95,19 @@ export interface OTP {
     active: boolean
 }
 
-export interface WalletConnectTransactionParams {
-    from: string,
-    to: string,
-    data: string,
-    gasLimit?: string,
-    gasPrice?: string,
-    value?: string,
-    nonce?: string,
-}
-
 export interface TransactionParams {
-    chain: string,
-    from: string,
-    to: string,
-    data?: string,
-    gas?: string,
-    gas_price?: string,
-    value?: string,
+    type: string,
     nonce?: string,
-    legacy: boolean,
+    to: string,
+    from: string,
+    gas?: string,
+    value?: string,
+    input?: string,
+    gasPrice?: string,
+    maxFeePerGas?: string,
+    maxPriorityFeePerGas?: string,
+    accessList?: any,
+    chainId?: string,
 }
 
 export interface TransactionFinalizePayload {

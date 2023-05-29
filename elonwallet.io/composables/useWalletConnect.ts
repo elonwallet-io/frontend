@@ -21,8 +21,8 @@ export default function () {
             core,
             metadata: {
                 name: 'ElonWallet',
-                description: 'ElonWallet Development Version',
-                url: 'www.walletconnect.com',
+                description: 'ElonWallet',
+                url: 'https://elonwallet.io',
                 icons: ['https://avatars.githubusercontent.com/u/37784886']
             }
         })
@@ -51,7 +51,6 @@ export default function () {
     }
 
     const onSessionRequest = async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
-        console.log('session_request', requestEvent)
         const { topic, params, id } = requestEvent
         const { request } = params
         const requestSession = web3wallet.value!.getActiveSessions()[topic]
@@ -94,7 +93,6 @@ export default function () {
     }
 
     const onSessionProposal = async (requestEvent: SignClientTypes.EventArguments['session_proposal']) => {
-        console.log('session_proposal', requestEvent)
 
         viewEvents.value = {
             view: WcViews.SessionProposal,
@@ -103,13 +101,11 @@ export default function () {
     }
 
     const onRespondSessionRequest = async (response: JsonRpcResponse, requestEvent: SignClientTypes.EventArguments['session_request']) => {
-        console.log(response, requestEvent)
         viewEvents.value = { view: WcViews.Connect }
         web3wallet.value!.respondSessionRequest({ topic: requestEvent.topic, response: response })
     }
 
     const onRespondSessionProposal = async (responseType: "approve" | "reject", params: any) => {
-        console.log(responseType, params)
         viewEvents.value = { view: WcViews.Connect }
 
         if (responseType === "approve") {
