@@ -110,11 +110,6 @@ export interface TransactionParams {
     chainId?: string,
 }
 
-export interface TransactionFinalizePayload {
-    assertion_response: UrlEncodedPublicKeyCredential,
-    transaction_params: TransactionParams
-}
-
 export interface SignTypedData {
     types: Record<string, Array<TypedDataField>>,
     primaryType: string,

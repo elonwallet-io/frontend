@@ -1,5 +1,5 @@
 import { HttpError } from "./HttpError";
-import { CreateCredentialFinalizePayload, EmergencyAccessContact, EmergencyAccessGrant, Fees, Network, OTP, SignTypedData, TransactionFinalizePayload, Wallet, WebauthnCredential } from "./types";
+import { CreateCredentialFinalizePayload, EmergencyAccessContact, EmergencyAccessGrant, Fees, Network, OTP, SignTypedData, TransactionParams, Wallet, WebauthnCredential } from "./types";
 import { UrlEncodedPublicKeyCredential, UrlEncodedPublicKeyCredentialCreationOptions, UrlEncodedPublicKeyCredentialRequestOptions } from "./webauthn";
 
 export class EnclaveApiClient {
@@ -324,14 +324,15 @@ export class EnclaveApiClient {
         return respJson.signature;
     }
 
-    async sendTransactionInitialize(): Promise<UrlEncodedPublicKeyCredentialRequestOptions> {
+    async sendTransactionInitialize(params: TransactionParams): Promise<UrlEncodedPublicKeyCredentialRequestOptions> {
         const resp = await fetch(`${this.baseURL}/transaction/send/initialize`, {
-            method: "GET",
+            method: "POST",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
+            body: JSON.stringify(params)
         });
 
         if (resp.status !== 200) {
@@ -343,7 +344,7 @@ export class EnclaveApiClient {
         return respJson.publicKey;
     }
 
-    async sendTransactionFinalize(payload: TransactionFinalizePayload): Promise<string> {
+    async sendTransactionFinalize(credential: UrlEncodedPublicKeyCredential): Promise<string> {
         const resp = await fetch(`${this.baseURL}/transaction/send/finalize`, {
             method: "POST",
             headers: {
@@ -351,7 +352,7 @@ export class EnclaveApiClient {
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify(payload)
+            body: JSON.stringify(credential)
         });
 
         if (resp.status !== 200) {
@@ -364,14 +365,15 @@ export class EnclaveApiClient {
         return respJson.hash;
     }
 
-    async signTransactionInitialize(): Promise<UrlEncodedPublicKeyCredentialRequestOptions> {
+    async signTransactionInitialize(params: TransactionParams): Promise<UrlEncodedPublicKeyCredentialRequestOptions> {
         const resp = await fetch(`${this.baseURL}/transaction/sign/initialize`, {
-            method: "GET",
+            method: "POST",
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
+            body: JSON.stringify(params)
         });
 
         if (resp.status !== 200) {
@@ -383,7 +385,7 @@ export class EnclaveApiClient {
         return respJson.publicKey;
     }
 
-    async signTransactionFinalize(payload: TransactionFinalizePayload): Promise<string> {
+    async signTransactionFinalize(credential: UrlEncodedPublicKeyCredential): Promise<string> {
         const resp = await fetch(`${this.baseURL}/transaction/sign/finalize`, {
             method: "POST",
             headers: {
@@ -391,7 +393,7 @@ export class EnclaveApiClient {
                 'Content-Type': 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify(payload)
+            body: JSON.stringify(credential)
         });
 
         if (resp.status !== 200) {

@@ -68,6 +68,10 @@ const sender = computed(() => {
         return "My Wallet";
     }
 
+    if (props.transaction.from_address.toLowerCase() === props.currentWallet.address.toLowerCase()) {
+        return "My Wallet";
+    }
+
     if (props.transaction.from_address.toLowerCase() === "0xbc04eacb3777480b17016aff2732d7cebe18e7a8") {
         return "ElonWallet.io"
     }

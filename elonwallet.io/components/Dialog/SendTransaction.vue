@@ -155,14 +155,9 @@ const sendTransaction = async (tx: TransactionParams) => {
     }
 
     const enclaveApiClient = useEnclave();
-    const options = await enclaveApiClient.sendTransactionInitialize();
+    const options = await enclaveApiClient.sendTransactionInitialize(tx);
     const credential = await solveLoginChallenge(options);
-    const payload = {
-        assertion_response: credential,
-        transaction_params: tx,
-    }
-
-    const hash = await enclaveApiClient.sendTransactionFinalize(payload)
+    const hash = await enclaveApiClient.sendTransactionFinalize(credential)
     return hash;
 }
 </script>
