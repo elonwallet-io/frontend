@@ -29,7 +29,7 @@
 import { isAddress, parseUnits } from 'ethers';
 import { formatCurrency } from '~/lib/UnitConverter';
 import { isRequired, isValidNumber, isGreaterThan } from '~/lib/VuetifyValidationRules';
-import { UINotificationType } from '~/lib/types';
+import { TransactionParams, UINotificationType } from '~/lib/types';
 import { solveLoginChallenge } from '~/lib/webauthn';
 
 const wallet = useCurrentWallet();
@@ -114,24 +114,22 @@ const onSend = async () => {
         transactionForm.value.reset();
         emit('on-close');
     } catch (error) {
+        console.log(error)
         displayNotificationFromError(error);
     }
 };
 
 const sendTransaction = async () => {
     const enclaveApiClient = useEnclave();
-
-    const options = await enclaveApiClient.sendTransactionInitialize();
+    const params: TransactionParams = {
+        type: "0x2",
+        chainId: network.value.chain_id_hex,
+        from: wallet.value!.address,
+        to: receiverAddress.value,
+        value: `0x${parseUnits(amount.value!, network.value.decimals).toString(16)}`,
+    };
+    const options = await enclaveApiClient.sendTransactionInitialize(params);
     const credential = await solveLoginChallenge(options);
-    await enclaveApiClient.sendTransactionFinalize({
-        assertion_response: credential,
-        transaction_params: {
-            type: "0x2",
-            chainId: network.value.chain_id_hex,
-            from: wallet.value!.address,
-            to: receiverAddress.value,
-            value: `0x${parseUnits(amount.value!, network.value.decimals).toString(16)}`,
-        }
-    });
+    await enclaveApiClient.sendTransactionFinalize(credential);
 }
 </script>

@@ -150,14 +150,9 @@ const onApprove = async () => {
 
 const signTransaction = async (tx: TransactionParams) => {
     const enclaveApiClient = useEnclave();
-    const options = await enclaveApiClient.signTransactionInitialize();
+    const options = await enclaveApiClient.signTransactionInitialize(tx);
     const credential = await solveLoginChallenge(options);
-    const payload = {
-        assertion_response: credential,
-        transaction_params: tx
-    }
-
-    const signedTx = await enclaveApiClient.signTransactionFinalize(payload)
+    const signedTx = await enclaveApiClient.signTransactionFinalize(credential)
     return signedTx;
 }
 </script>
