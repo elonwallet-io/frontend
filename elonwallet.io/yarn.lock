@@ -2,9 +2,10 @@
 # yarn lockfile v1
 
 
-"@adraffy/ens-normalize@https://github.com/ricmoo/ens-normalize.js":
-  version "1.9.0"
-  resolved "https://github.com/ricmoo/ens-normalize.js#2d040533e57e4f25f9a7cc4715e219658ad454b5"
+"@adraffy/ens-normalize@1.9.2":
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/@adraffy/ens-normalize/-/ens-normalize-1.9.2.tgz#60111a5d9db45b2e5cbb6231b0bb8d97e8659316"
+  integrity sha512-0h+FrQDqe2Wn+IIGFkTCd4aAwTJ+7834Ek1COohCyV26AXhwQ7WQaz+4F/nLOeVl/3BtWHOHLPsq46V8YB46Eg==
 
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
@@ -1065,12 +1066,12 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.2.tgz#5749f04df13bda4c863338d8dabaf370f45ef7c7"
   integrity sha512-GBzP8zOc7CGWyFQS6dv1lQz8VVpz5C2yRszbXufwG/9zhStTIH50EtD87NmWbTMwXDvZLNg8GIpb1UFdH93JCA==
 
-"@nuxt/kit@3.5.2":
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.5.2.tgz#ebcb1ee9cd66934f9845b04460201a81c9340ea2"
-  integrity sha512-DwmJFJbzbg5T/Qcf5ruiHBfWuLIasTakIeifKS+pqS+VhZDoUW0O7jHm6jESQ5reAbde+L+IH6bXN/y07ivkRA==
+"@nuxt/kit@3.5.3":
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.5.3.tgz#879d556142febcc8250aff857e75bb8d87daedbb"
+  integrity sha512-QzoOGqa1zjKQfg7Y50TrrFAL9DhtIpYYs10gihcM1ISPrn9ROht+VEjqsaMvT+L8JuQbNf8wDYl8qzsdWGU29Q==
   dependencies:
-    "@nuxt/schema" "3.5.2"
+    "@nuxt/schema" "3.5.3"
     c12 "^1.4.1"
     consola "^3.1.0"
     defu "^6.1.2"
@@ -1079,9 +1080,8 @@
     ignore "^5.2.4"
     jiti "^1.18.2"
     knitwork "^1.0.0"
-    lodash.template "^4.5.0"
     mlly "^1.3.0"
-    pathe "^1.1.0"
+    pathe "^1.1.1"
     pkg-types "^1.0.3"
     scule "^1.0.0"
     semver "^7.5.1"
@@ -1132,14 +1132,14 @@
     unimport "^3.0.6"
     untyped "^1.3.2"
 
-"@nuxt/schema@3.5.2":
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.5.2.tgz#9d86d63fd3e121d2255d6f893dd33159636d7084"
-  integrity sha512-7u7NZ1TgSdjdOkLaFhv8iP+Lr9whqemMuLDALpnR+HJGC/Mm8ep+yECgCwIT/h1bM/nogZyGWO0xjOIdtzqlUA==
+"@nuxt/schema@3.5.3":
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.5.3.tgz#acea27a12fbcc24112abea84d0dddf899ce0343d"
+  integrity sha512-Tnon4mYfJZmsCtx4NZ9A+qjwo4DcZ6tERpEhYBY81PX7AiJ+hFPBFR1qR32Tff66/qJjZg5UXj6H9AdzwEYr2w==
   dependencies:
     defu "^6.1.2"
     hookable "^5.5.3"
-    pathe "^1.1.0"
+    pathe "^1.1.1"
     pkg-types "^1.0.3"
     postcss-import-resolver "^2.0.0"
     std-env "^3.3.3"
@@ -1178,12 +1178,12 @@
   resolved "https://registry.yarnpkg.com/@nuxt/ui-templates/-/ui-templates-1.1.1.tgz#db3539e3c9391c217510def5242cf74739e685ea"
   integrity sha512-PjVETP7+iZXAs5Q8O4ivl4t6qjWZMZqwiTVogUXHoHGZZcw7GZW3u3tzfYfE1HbzyYJfr236IXqQ02MeR8Fz2w==
 
-"@nuxt/vite-builder@3.5.2":
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/@nuxt/vite-builder/-/vite-builder-3.5.2.tgz#4119478024c425a758eda9a131f928d798d50c89"
-  integrity sha512-w7ajMtMGKq/PE+dAcfuHio3qgE9ow51LZtNLJlmao3PXHzcpFBJLuuhlOumfwDX1ubpwDhoR8YcOsGwY9JWHqQ==
+"@nuxt/vite-builder@3.5.3":
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/@nuxt/vite-builder/-/vite-builder-3.5.3.tgz#66d5966c7af88ba777dd1bbbe566f5026c03ffbc"
+  integrity sha512-7zEKpGh3iWGRDwbWUa8eRxdLMxZtPzetelmdmXPjtYKGwUebZOcBhpeJ+VgJKOIf4OEj9E7BZS+it/Ji9UG9qw==
   dependencies:
-    "@nuxt/kit" "3.5.2"
+    "@nuxt/kit" "3.5.3"
     "@rollup/plugin-replace" "^5.0.2"
     "@vitejs/plugin-vue" "^4.2.3"
     "@vitejs/plugin-vue-jsx" "^3.0.1"
@@ -1203,7 +1203,7 @@
     magic-string "^0.30.0"
     mlly "^1.3.0"
     ohash "^1.1.2"
-    pathe "^1.1.0"
+    pathe "^1.1.1"
     perfect-debounce "^1.0.0"
     pkg-types "^1.0.3"
     postcss "^8.4.24"
@@ -1215,7 +1215,7 @@
     ufo "^1.1.2"
     unplugin "^1.3.1"
     vite "~4.3.9"
-    vite-node "^0.31.1"
+    vite-node "^0.31.4"
     vite-plugin-checker "^0.6.0"
     vue-bundle-renderer "^1.0.3"
 
@@ -1778,10 +1778,10 @@
     events "^3.3.0"
     isomorphic-unfetch "^3.1.0"
 
-"@walletconnect/core@2.7.7":
-  version "2.7.7"
-  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-2.7.7.tgz#49ddaa9d8aff365cd347b951d9b4c1c39a949e83"
-  integrity sha512-/Tmrjx9XDG8qylsUFU2fWvMoxlDwW+zzUcCgTaebMAmssCZ8NSknbBdjAdAKiey1TaLEgFkaCxXgXfioinWNYg==
+"@walletconnect/core@2.7.8":
+  version "2.7.8"
+  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-2.7.8.tgz#e75329379cc61dc124c85619998a65eecabe4f53"
+  integrity sha512-Ptp1Jo9hv5mtrQMF/iC/RF/KHmYfO79DBLj77AV4PnJ5z6J0MRYepPKXKFEirOXR4OKCT5qCrPOiRtGvtNI+sg==
   dependencies:
     "@walletconnect/heartbeat" "1.2.1"
     "@walletconnect/jsonrpc-provider" "1.0.13"
@@ -1794,8 +1794,8 @@
     "@walletconnect/relay-auth" "^1.0.4"
     "@walletconnect/safe-json" "^1.0.2"
     "@walletconnect/time" "^1.0.2"
-    "@walletconnect/types" "2.7.7"
-    "@walletconnect/utils" "2.7.7"
+    "@walletconnect/types" "2.7.8"
+    "@walletconnect/utils" "2.7.8"
     events "^3.3.0"
     lodash.isequal "4.5.0"
     uint8arrays "^3.1.0"
@@ -1943,19 +1943,19 @@
   dependencies:
     tslib "1.14.1"
 
-"@walletconnect/sign-client@2.7.7":
-  version "2.7.7"
-  resolved "https://registry.yarnpkg.com/@walletconnect/sign-client/-/sign-client-2.7.7.tgz#a2be064eaff37ab036919bd33f1cf9ddf4681fdd"
-  integrity sha512-lTyF8ZEp+HwPNBW/Fw5iWnMm9O5tC1qwf5YfhNczZ7+q6+UUopOoRrsAvwqftJIkgKmfC8lHT52G/XM2JGVjbQ==
+"@walletconnect/sign-client@2.7.8":
+  version "2.7.8"
+  resolved "https://registry.yarnpkg.com/@walletconnect/sign-client/-/sign-client-2.7.8.tgz#02a4030080d585bbc7772d77b102e3b6fa78e19b"
+  integrity sha512-na7VeXiOwM83w69s4kA5IeuL2SezwIbHfJsitmbtmsTLaX8Hnf7HwaJrNzrdhKpnEw8a+uG/xDTq+RYY50zf+A==
   dependencies:
-    "@walletconnect/core" "2.7.7"
+    "@walletconnect/core" "2.7.8"
     "@walletconnect/events" "^1.0.1"
     "@walletconnect/heartbeat" "1.2.1"
     "@walletconnect/jsonrpc-utils" "1.0.8"
     "@walletconnect/logger" "^2.0.1"
     "@walletconnect/time" "^1.0.2"
-    "@walletconnect/types" "2.7.7"
-    "@walletconnect/utils" "2.7.7"
+    "@walletconnect/types" "2.7.8"
+    "@walletconnect/utils" "2.7.8"
     events "^3.3.0"
 
 "@walletconnect/time@^1.0.2":
@@ -1977,10 +1977,10 @@
     "@walletconnect/logger" "^2.0.1"
     events "^3.3.0"
 
-"@walletconnect/types@2.7.7", "@walletconnect/types@^2.7.7":
-  version "2.7.7"
-  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-2.7.7.tgz#c02831a17b6162d8594c45e3cc4668015e022f51"
-  integrity sha512-Z4Y+BKPX7X1UBCf7QV35mVy2QU9CS+5G+EthCaJwpieirZNHamHEwNXUjuUUb3PrYOLwlfRYUT5edeFW9wvoeQ==
+"@walletconnect/types@2.7.8", "@walletconnect/types@^2.7.8":
+  version "2.7.8"
+  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-2.7.8.tgz#681bd2a3c0e80fcda877a6b6aba09567b938c7a6"
+  integrity sha512-1ZucKd5F4Ws+O84Yl4tCzd+hcD3A9vnaimKyC753b7Jdtwg2dm21E6H9t34kOVsFjVdKt9qFrZ1LaVL7SZp59g==
   dependencies:
     "@walletconnect/events" "^1.0.1"
     "@walletconnect/heartbeat" "1.2.1"
@@ -2009,10 +2009,10 @@
     query-string "7.1.3"
     uint8arrays "^3.1.0"
 
-"@walletconnect/utils@2.7.7":
-  version "2.7.7"
-  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-2.7.7.tgz#e2d8732f8ac3ffbc1de13e923891b256eb3bbefb"
-  integrity sha512-ozh9gvRAdXkiu+6nOAkoDCokDVPXK/tNATrrYuOhhR+EmGDjlZU2d27HT+HiGREdza0b1HdZN4XneGm0gERV5w==
+"@walletconnect/utils@2.7.8":
+  version "2.7.8"
+  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-2.7.8.tgz#494647eb5ed1fa30363c6a127e1a76356e2780a5"
+  integrity sha512-W3GudJNZUlSdKJ7fyMqeDoM02Ffd7jmK6mxxmRGkxF6mf9ciIxEPDWl18JGkanp+EDK06PXLm4/64fraLkbJVQ==
   dependencies:
     "@stablelib/chacha20poly1305" "1.0.1"
     "@stablelib/hkdf" "1.0.1"
@@ -2022,26 +2022,26 @@
     "@walletconnect/relay-api" "^1.0.9"
     "@walletconnect/safe-json" "^1.0.2"
     "@walletconnect/time" "^1.0.2"
-    "@walletconnect/types" "2.7.7"
+    "@walletconnect/types" "2.7.8"
     "@walletconnect/window-getters" "^1.0.1"
     "@walletconnect/window-metadata" "^1.0.1"
     detect-browser "5.3.0"
     query-string "7.1.3"
     uint8arrays "^3.1.0"
 
-"@walletconnect/web3wallet@^1.7.5":
-  version "1.7.5"
-  resolved "https://registry.yarnpkg.com/@walletconnect/web3wallet/-/web3wallet-1.7.5.tgz#cb624f4be5ff2ff17cab23de93f588611bd6452f"
-  integrity sha512-9fdfbPfczyUdcYK2O353uRtOCEVtlM8zLMPPVUHZEzVuJ1M4DHLRj1K5SDH62UQt1WA3ue8U8s4aEH5RKle6ww==
+"@walletconnect/web3wallet@^1.7.6":
+  version "1.7.6"
+  resolved "https://registry.yarnpkg.com/@walletconnect/web3wallet/-/web3wallet-1.7.6.tgz#a9403486d0c92e60cc653e7df705d7350561120a"
+  integrity sha512-MXMTPwubzfg6NcMzVvG3TKtuIu3hL0dAy6R9x4E7HX1Rnb3qmRtaQ4A8UdDtKLNK3uMhUhWYh2qT2VJzwMnAUg==
   dependencies:
     "@walletconnect/auth-client" "2.1.0"
-    "@walletconnect/core" "2.7.7"
+    "@walletconnect/core" "2.7.8"
     "@walletconnect/jsonrpc-provider" "1.0.13"
     "@walletconnect/jsonrpc-utils" "1.0.8"
     "@walletconnect/logger" "2.0.1"
-    "@walletconnect/sign-client" "2.7.7"
-    "@walletconnect/types" "2.7.7"
-    "@walletconnect/utils" "2.7.7"
+    "@walletconnect/sign-client" "2.7.8"
+    "@walletconnect/types" "2.7.8"
+    "@walletconnect/utils" "2.7.8"
 
 "@walletconnect/window-getters@^1.0.1":
   version "1.0.1"
@@ -3159,12 +3159,12 @@ etag@^1.8.1, etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==
 
-ethers@^6.4.0:
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.4.0.tgz#82c230a3a018a2627593d24ec4b9c20e9681c341"
-  integrity sha512-nksaMCwX+BOdV2NQ1/57OehSD2JtujbhrdC2+Fb9VpvBO0WO6h+WWwu3oMMw7aUiTa5lvQcWX1vl4aOy7Q3CTg==
+ethers@^6.5.1:
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.5.1.tgz#7beeeea2156dc4227da1176cb164007018b85c63"
+  integrity sha512-jDpCnUGcyn39hnRUEtrulDZOtJcIPEz4Whccl3N9qhwdLsn1ELuDM9TgGgGJq6ph0p8/Uri+Wezmo/r69E+xkA==
   dependencies:
-    "@adraffy/ens-normalize" "https://github.com/ricmoo/ens-normalize.js"
+    "@adraffy/ens-normalize" "1.9.2"
     "@noble/hashes" "1.1.2"
     "@noble/secp256k1" "1.7.1"
     "@types/node" "18.15.13"
@@ -4513,24 +4513,24 @@ nth-check@^2.0.1:
   dependencies:
     boolbase "^1.0.0"
 
-nuxi@3.5.2:
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/nuxi/-/nuxi-3.5.2.tgz#2eafd452fae060d0d1a9ec150f709f18d9202725"
-  integrity sha512-6zkgQpMbv74vITFiu9TGe8UXsBOCxEy3Nw1/wYjRBH0p1gGLl0/rxubAeSpXw3NHQzRHTt75fYgWEGOfzPWOXQ==
+nuxi@3.5.3:
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/nuxi/-/nuxi-3.5.3.tgz#81442b473a936e6814661cc543699335c2533301"
+  integrity sha512-H0/Nj0ulUN8PrSvr6H433Awt4hNT5uaN57041QfknYVXlUce7yEbl/NcpNtnneAHYn2hMUZL9/nJCVkZ1xTvHA==
   optionalDependencies:
     fsevents "~2.3.2"
 
-nuxt@^3.5.2:
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-3.5.2.tgz#1471ddb21d57d18589ac83c7b8fa6e17c0e518f0"
-  integrity sha512-PVA+1d0UBujODogxhnfbolYFOawAf2paOVlARxJdm1npVQBPz9Ns8tKpWglbZhwRdXpj1jDE9Dl+Ke3pl59dZw==
+nuxt@^3.5.3:
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/nuxt/-/nuxt-3.5.3.tgz#2997a62b8c1088c4b8eeae358838732f5dad0653"
+  integrity sha512-fG39BZ5N5ATtmx2vuxN8APQPSlSsCDpfkJ0k581gMc7eFztqrBzPncZX5w3RQLW7AiGBE2yYEfqiwC6AVODBBg==
   dependencies:
     "@nuxt/devalue" "^2.0.2"
-    "@nuxt/kit" "3.5.2"
-    "@nuxt/schema" "3.5.2"
+    "@nuxt/kit" "3.5.3"
+    "@nuxt/schema" "3.5.3"
     "@nuxt/telemetry" "^2.2.0"
     "@nuxt/ui-templates" "^1.1.1"
-    "@nuxt/vite-builder" "3.5.2"
+    "@nuxt/vite-builder" "3.5.3"
     "@unhead/ssr" "^1.1.27"
     "@unhead/vue" "^1.1.27"
     "@vue/shared" "^3.3.4"
@@ -4553,11 +4553,11 @@ nuxt@^3.5.2:
     magic-string "^0.30.0"
     mlly "^1.3.0"
     nitropack "^2.4.1"
-    nuxi "3.5.2"
+    nuxi "3.5.3"
     nypm "^0.2.0"
     ofetch "^1.0.1"
     ohash "^1.1.2"
-    pathe "^1.1.0"
+    pathe "^1.1.1"
     perfect-debounce "^1.0.0"
     prompts "^2.4.2"
     scule "^1.0.0"
@@ -4742,6 +4742,11 @@ pathe@^1.0.0, pathe@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pathe/-/pathe-1.1.0.tgz#e2e13f6c62b31a3289af4ba19886c230f295ec03"
   integrity sha512-ODbEPR0KKHqECXW1GoxdDb+AZvULmXjVPy4rt+pGo2+TnjJTIPJQSVS6N63n8T2Ip+syHhbn52OewKicV0373w==
+
+pathe@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/pathe/-/pathe-1.1.1.tgz#1dd31d382b974ba69809adc9a7a347e65d84829a"
+  integrity sha512-d+RQGp0MAYTIaDBIMmOfMwz3E+LOZnxx1HZd5R18mmCZY0QBlK0LDZfPc8FW8Ed2DlvsuE6PRjroDY+wg4+j/Q==
 
 perfect-debounce@^0.1.3:
   version "0.1.3"
@@ -5397,10 +5402,10 @@ safe-stable-stringify@^2.1.0:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-sass@^1.62.1:
-  version "1.62.1"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.62.1.tgz#caa8d6bf098935bc92fc73fa169fb3790cacd029"
-  integrity sha512-NHpxIzN29MXvWiuswfc1W3I0N8SXBd8UR26WntmDlRYf0bSADnwnOjsyMZ3lMezSlArD33Vs3YFhp7dWvL770A==
+sass@^1.63.2:
+  version "1.63.2"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.63.2.tgz#75f7d9a8e67d1d5b98a989507f4d98b6067b1f75"
+  integrity sha512-u56TU0AIFqMtauKl/OJ1AeFsXqRHkgO7nCWmHaDwfxDo9GUMSqBA4NEh6GMuh1CYVM7zuROYtZrHzPc2ixK+ww==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
     immutable "^4.0.0"
@@ -6117,10 +6122,10 @@ util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
-vite-node@^0.31.1:
-  version "0.31.1"
-  resolved "https://registry.yarnpkg.com/vite-node/-/vite-node-0.31.1.tgz#9fea18cbf9552ab262b969068249a8b8e7fb8b38"
-  integrity sha512-BajE/IsNQ6JyizPzu9zRgHrBwczkAs0erQf/JRpgTIESpKvNj9/Gd0vxX905klLkb0I0SJVCKbdrl5c6FnqYKA==
+vite-node@^0.31.4:
+  version "0.31.4"
+  resolved "https://registry.yarnpkg.com/vite-node/-/vite-node-0.31.4.tgz#0437f76c35fa83f0a868d3fb5896ca9e164291f5"
+  integrity sha512-uzL377GjJtTbuc5KQxVbDu2xfU/x0wVjUtXQR2ihS21q/NK6ROr4oG0rsSkBBddZUVCwzfx22in76/0ZZHXgkQ==
   dependencies:
     cac "^6.7.14"
     debug "^4.3.4"
@@ -6270,10 +6275,10 @@ vue@^3.3.4:
     "@vue/server-renderer" "3.3.4"
     "@vue/shared" "3.3.4"
 
-vuetify@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-3.3.2.tgz#8682486eb36b5d9d64c8f1c2bdfe36119f6ffbc6"
-  integrity sha512-m/R42di8FlyMaoktUe6k8JbF+A0vbJMpjQrZK7nH1ptK8VinVVQcaw+9m94wlO74IMR+LubxLh5t9I2ZtVCvjw==
+vuetify@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-3.3.3.tgz#82904abbed936abaf775b8394b0d094d4b56cbc7"
+  integrity sha512-oLpm6L6Zvf4b7Ua8V3INnUkGoxbi04O68ymEbBDLrPFzmIkzAcwd9L/2Ega582PRJnjTBBZapa6KdmosvhVvgA==
 
 wcwidth@^1.0.1:
   version "1.0.1"

@@ -93,7 +93,6 @@ export default function () {
     }
 
     const onSessionProposal = async (requestEvent: SignClientTypes.EventArguments['session_proposal']) => {
-
         viewEvents.value = {
             view: WcViews.SessionProposal,
             proposal: requestEvent
