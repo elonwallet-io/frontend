@@ -27,8 +27,7 @@ onMounted(async () => {
 
 const activateUser = async () => {
     const backendApiClient = useBackend();
-    await backendApiClient.activateUser(email.value, props.activationString);
     const enclaveURL = useEnclaveURL();
-    enclaveURL.value = await backendApiClient.getEnclaveURL(email.value)
+    enclaveURL.value = await backendApiClient.activateUser(email.value, props.activationString);
 }
 </script>

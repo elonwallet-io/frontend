@@ -143,7 +143,7 @@ export class BackendApiClient {
     }
 
 
-    async activateUser(email: string, activationString: string): Promise<void> {
+    async activateUser(email: string, activationString: string): Promise<string> {
         const resp = await fetch(`${this.baseURL}/users/${encodeURIComponent(email)}/activate`, {
             method: "POST",
             headers: {
@@ -157,6 +157,9 @@ export class BackendApiClient {
             const error = await HttpError.fromResponse(resp);
             throw error;
         }
+
+        const respJson = await resp.json();
+        return respJson.enclave_url;
     }
 
     async getEnclaveURL(email: string): Promise<string> {
