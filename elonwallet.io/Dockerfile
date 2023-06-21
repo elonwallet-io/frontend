@@ -7,14 +7,14 @@ COPY . .
 RUN yarn install && \
     yarn generate
 
-FROM nginx:alpine
+FROM caddy:alpine
 
-RUN rm -rf /usr/share/nginx/html/* && \
-    rm -rf /etc/nginx/nginx.conf
+RUN rm -rf /usr/share/caddy/* && \
+    rm -rf /etc/caddy/Caddyfile
 
-COPY ./nginx.conf \
-    /etc/nginx/nginx.conf
+COPY ./Caddyfile \
+    /etc/caddy/Caddyfile
 
 COPY --from=build-env \
     /app/.output/public \
-    /usr/share/nginx/html
+    /usr/share/caddy
