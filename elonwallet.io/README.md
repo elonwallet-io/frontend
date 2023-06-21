@@ -56,13 +56,6 @@ Create a volume for the certificates
 docker volume create caddy_data
 ```
 
-Fill the volume with your certificate files
-
-```bash
-docker container create -v caddy_data:/data --name helper busybox true
-docker rm helper
-```
-
 Replace the hardcoded domain inside the webflow index page and caddy config with one you own
 ```bash
 sed -i 's/https:\/\/elonwallet\.io/<REPLACE_WITH_YOUR_DOMAIN>/g' ./public/index.html
