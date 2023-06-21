@@ -53,27 +53,18 @@ docker build -t frontend .
 Create a volume for the certificates
 
 ```bash
-docker volume create certs
+docker volume create caddy_data
 ```
 
-Fill the volume with your certificate files
-
-```bash
-docker container create -v certs:/data --name helper busybox true
-docker cp frontend-cert.pem helper:/data
-docker cp frontend-key.pem helper:/data
-docker rm helper
-```
-
-Replace the hardcoded domain inside the webflow index page and nginx config with one you own
+Replace the hardcoded domain inside the webflow index page and caddy config with one you own
 ```bash
 sed -i 's/https:\/\/elonwallet\.io/<REPLACE_WITH_YOUR_DOMAIN>/g' ./public/index.html
-sed -i 's/elonwallet\.io/<REPLACE_WITH_YOUR_DOMAIN>/g' nginx.conf
+sed -i 's/elonwallet\.io/<REPLACE_WITH_YOUR_DOMAIN>/g' Caddyfile
 ```
 
 Run the image
 
 ```bash
-docker run -d -p 80:80 -p 443:443 -v certs:/certs frontend
+docker run -d -p 80:80 -p 443:443 -p 443:443/udp -v caddy_data:/data frontend
 ```
 
