@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      projectId: import.meta.env.PROJECT_ID?.toString() ?? "",
+      projectId: import.meta.env.WALLETCONNECT_PROJECT_ID?.toString() ?? "",
       backendUrl: import.meta.env.BACKEND_URL?.toString() ?? ""
     }
   },
