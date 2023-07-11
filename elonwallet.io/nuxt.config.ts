@@ -6,6 +6,11 @@ export default defineNuxtConfig({
       backendUrl: import.meta.env.BACKEND_URL?.toString() ?? ""
     }
   },
+  nitro: {
+    prerender: {
+      crawlLinks: true
+    }
+  },
   css: ['~/assets/css/main.css', 'vuetify/lib/styles/main.sass', '@mdi/font/css/materialdesignicons.min.css'],
   postcss: {
     plugins: {
