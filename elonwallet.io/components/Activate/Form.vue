@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col items-center">
-        <p class="text-2xl text-center">Your enclave is ready to be set up.</p>
+        <p class="text-2xl text-center">Your Wallet Service is ready to be set up.</p>
         <p class="text-2xl text-center">Please have your security key or passkey ready.</p>
         <v-form ref="form" validate-on="blur" class="flex flex-col gap-2 w-72 m-8" @submit.prevent>
             <v-text-field variant="solo" v-model="credentialName" :rules="credentialNameRules" label="Credential Name"

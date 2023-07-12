@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col items-center">
-        <p class="text-2xl mb-8">Your personal Enclave is being deployed ...</p>
+        <p class="text-2xl mb-8">Your personal Wallet Service is being deployed ...</p>
         <v-progress-circular :size="72" :width="7" indeterminate />
     </div>
 </template>
