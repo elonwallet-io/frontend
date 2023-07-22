@@ -17,7 +17,7 @@
     "autoprefixer": "^10.4.14",
     "ethers": "^6.6.4",
     "postcss": "^8.4.27",
-    "sass": "^1.64.0",
+    "sass": "^1.64.1",
     "tailwindcss": "^3.3.3",
     "vue3-qrcode-reader": "^0.0.1",
     "vuetify": "^3.3.9"
